@@ -4,6 +4,13 @@ import { Link } from 'react-router-dom';
 export default function Blog() {
   const posts = [
     {
+      title: 'Hospital Notary Services in Charlotte',
+      slug: 'hospital-notary-services-charlotte',
+      date: 'April 30, 2026',
+      excerpt: 'When a loved one is in the hospital, the last thing you want to worry about is legal paperwork. Learn why a specialized hospital notary is essential for Power of Attorney and healthcare directives.',
+      imageUrl: 'https://cdn.marblism.com/Ie0zTHtmFKR.webp'
+    },
+    {
       title: 'Charlotte, NC Remote Closings: How Mobile Notaries Help Buyers',
       slug: 'charlotte-nc-remote-closings-how-mobile-notaries-help-buyers',
       date: 'April 17, 2026',
