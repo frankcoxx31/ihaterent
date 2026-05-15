@@ -32,7 +32,7 @@ export default function Services() {
     },
     {
       title: 'Loan Signing Agent',
-      description: 'Accurate, professional handling of real estate and mortgage loan closings.',
+      description: 'Professional mobile document signing support for real estate and mortgage appointments.',
       image: '/mobile-notary.jpg',
       link: '/loan-signing-agent-charlotte-nc'
     }

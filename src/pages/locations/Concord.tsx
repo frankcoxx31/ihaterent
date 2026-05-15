@@ -1,5 +1,6 @@
 import CityPageLayout from '../../components/CityPageLayout';
 import { FileSignature, FileText, Laptop, Clock, HeartPulse, ShieldCheck } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Concord() {
   return (
@@ -8,15 +9,17 @@ export default function Concord() {
       image="https://images.unsplash.com/photo-1580655653885-65763b2597d0?auto=format&fit=crop&q=80&w=1920"
       introText={
         <>
-          Searching for a <strong>mobile notary in Concord, NC</strong>? Integrity Closings CLT offers professional, reliable, and fast notary services throughout Cabarrus County. Whether you are at a local coffee shop in <strong>Historic Downtown Concord</strong>, a business near <strong>Concord Mills</strong>, or your own front door, we bring the notary office directly to you. We specialize in complex signings and urgent requests, ensuring your legal documents are handled with the highest level of integrity.
+          Searching for a <strong>mobile notary in Concord, NC</strong>? Integrity Closings CLT provides professional general notary services throughout Cabarrus County. We meet you at your convenience—at home, at work, or a local Concord landmark—to notarize your legal paperwork quickly and securely.
+          <br /><br />
+          <em>Closing on a home?</em> Please see our <Link to="/locations/concord-loan-signing-agent" className="text-blue-600 font-bold hover:underline">Concord Loan Signing Agent</Link> page for specialized mortgage document facilitation.
         </>
       }
       services={[
         {
-          title: "Loan Signing Services",
-          description: <>Expert handling of mortgages, refinances, HELOCs, and seller packages. We serve homeowners in neighborhoods like <strong>Afton Village, Beverly Hills, and Poplar Woods</strong>.</>,
+          title: "Loan Signing Specialty",
+          description: <>Specialized mortgage closing facilitation for lenders and borrowers. Visit our <Link to="/locations/concord-loan-signing-agent" className="text-blue-600 font-bold hover:underline">Concord Loan Signing</Link> page.</>,
           icon: <FileSignature className="w-6 h-6 text-blue-600" />,
-          link: "/loan-signing-agent-charlotte-nc"
+          link: "/locations/concord-loan-signing-agent"
         },
         {
           title: "Estate Planning Notary",

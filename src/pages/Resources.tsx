@@ -26,6 +26,12 @@ export default function Resources() {
 
   const articles = [
     { 
+      title: 'How Mobile Loan Signing Support Saves Your Closing Team Time', 
+      description: 'See how mobile loan signing support helps Charlotte title companies and closing attorneys reduce delays and handle overflow filings.', 
+      icon: <FileText className="w-6 h-6 text-blue-600" />,
+      link: '/blog/mobile-loan-signing-support-saves-closing-team-time'
+    },
+    { 
       title: '5 Documents You Should Have Notarized Before You Turn 50', 
       description: 'Turning 50 is a major milestone. Ensure your future is secure by having these 5 essential legal documents properly notarized.', 
       icon: <FileText className="w-6 h-6 text-blue-600" />,

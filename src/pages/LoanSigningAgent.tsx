@@ -39,7 +39,7 @@ export default function LoanSigningAgent() {
               "name": "What does a loan signing agent do?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "A loan signing agent is a specialized notary public certified to guide borrowers through mortgage loan documents. They ensure all signatures, dates, and initials are properly executed and return the documents promptly to the title company or lender."
+                "text": "A loan signing agent is a specialized professional trained to guide borrowers through mortgage loan documents. They ensure all signatures, dates, and initials are properly executed and return the documents promptly to the title company or lender."
               }
             },
             {
@@ -60,10 +60,10 @@ export default function LoanSigningAgent() {
             },
             {
               "@type": "Question",
-              "name": "Are you certified and background screened?",
+              "name": "Are you background screened?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Yes, we are highly trained, NNA Certified, background screened, and carry $100,000 in Errors and Omissions (E&O) insurance to protect both you and your clients."
+                "text": "Yes, we are highly trained, background screened, and carry $100,000 in Errors and Omissions (E&O) insurance to protect both you and your clients."
               }
             },
             {
@@ -199,7 +199,7 @@ export default function LoanSigningAgent() {
                 {[
                   {
                     q: "What does a loan signing agent do?",
-                    a: "A loan signing agent is a specialized notary public certified to guide borrowers through mortgage loan documents. They ensure all signatures, dates, and initials are properly executed and return the documents promptly to the title company or lender."
+                    a: "A loan signing agent is a specialized professional trained to guide borrowers through mortgage loan documents. They ensure all signatures, dates, and initials are properly executed and return the documents promptly to the title company or lender."
                   },
                   {
                     q: "Do you travel to my clients for loan closings?",
@@ -210,8 +210,8 @@ export default function LoanSigningAgent() {
                     a: "We immediately review all documents for accuracy at the signing table. Scantebacks are typically provided within hours of closing, and physical documents are dropped at FedEx or UPS the same day before the cutoff."
                   },
                   {
-                    q: "Are you certified and background screened?",
-                    a: "Yes, we are highly trained, NNA Certified, background screened, and carry $100,000 in Errors and Omissions (E&O) insurance to protect both you and your clients."
+                    q: "Are you background screened?",
+                    a: "Yes, we are highly trained, background screened, and carry $100,000 in Errors and Omissions (E&O) insurance to protect both you and your clients."
                   },
                   {
                     q: "What types of loan packages do you handle?",
@@ -226,6 +226,44 @@ export default function LoanSigningAgent() {
               </div>
             </section>
             
+            <section className="mb-12">
+              <div className="flex items-center mb-6">
+                <MapPin className="w-6 h-6 text-blue-600 mr-3" />
+                <h2 className="text-2xl font-bold text-slate-900">Featured Loan Signing Areas</h2>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <Link to="/locations/mint-hill-loan-signing-agent" className="p-3 bg-slate-50 border border-slate-100 rounded-lg hover:bg-slate-100 transition-colors text-slate-700 font-medium flex items-center">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                  Mint Hill Loan Signing Agent
+                </Link>
+                <Link to="/locations/matthews-loan-signing-agent" className="p-3 bg-slate-50 border border-slate-100 rounded-lg hover:bg-slate-100 transition-colors text-slate-700 font-medium flex items-center">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                  Matthews Loan Signing Agent
+                </Link>
+                <Link to="/locations/concord-loan-signing-agent" className="p-3 bg-slate-50 border border-slate-100 rounded-lg hover:bg-slate-100 transition-colors text-slate-700 font-medium flex items-center">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                  Concord Loan Signing Agent
+                </Link>
+                <Link to="/locations/cabarrus-county-loan-signing-agent" className="p-3 bg-slate-50 border border-slate-100 rounded-lg hover:bg-slate-100 transition-colors text-slate-700 font-medium flex items-center">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                  Cabarrus County Loan Signing
+                </Link>
+                <Link to="/locations/union-county-loan-signing-agent" className="p-3 bg-slate-50 border border-slate-100 rounded-lg hover:bg-slate-100 transition-colors text-slate-700 font-medium flex items-center">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                  Union County Loan Signing
+                </Link>
+              </div>
+              <div className="mt-8 p-6 bg-blue-50 rounded-2xl border border-blue-100 flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">Title Company or Attorney?</h3>
+                  <p className="text-slate-600">We offer specialized overflow and mobile closing support for Charlotte-area firms.</p>
+                </div>
+                <Link to="/title-company-attorney-closing-support-charlotte-nc" className="whitespace-nowrap px-6 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors">
+                  View Professional Support
+                </Link>
+              </div>
+            </section>
+
             <section className="mb-12">
               <div className="flex items-center mb-4">
                 <MapPin className="w-6 h-6 text-blue-600 mr-3" />

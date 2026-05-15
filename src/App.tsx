@@ -51,6 +51,12 @@ import Gastonia from './pages/locations/Gastonia';
 import Salisbury from './pages/locations/Salisbury';
 import Monroe from './pages/locations/Monroe';
 import Matthews from './pages/locations/Matthews';
+import MintHillLoanSigning from './pages/locations/MintHillLoanSigning';
+import MatthewsLoanSigning from './pages/locations/MatthewsLoanSigning';
+import ConcordLoanSigning from './pages/locations/ConcordLoanSigning';
+import CabarrusCountyLoanSigning from './pages/locations/CabarrusCountyLoanSigning';
+import UnionCountyLoanSigning from './pages/locations/UnionCountyLoanSigning';
+import TitleAttorneySupport from './pages/TitleAttorneySupport';
 import AreasServed from './pages/AreasServed';
 
 export default function App() {
@@ -95,6 +101,12 @@ function AppContent() {
             <Route path="/locations/salisbury" element={<Salisbury />} />
             <Route path="/locations/monroe" element={<Monroe />} />
             <Route path="/locations/matthews" element={<Matthews />} />
+            <Route path="/locations/mint-hill-loan-signing-agent" element={<MintHillLoanSigning />} />
+            <Route path="/locations/matthews-loan-signing-agent" element={<MatthewsLoanSigning />} />
+            <Route path="/locations/concord-loan-signing-agent" element={<ConcordLoanSigning />} />
+            <Route path="/locations/cabarrus-county-loan-signing-agent" element={<CabarrusCountyLoanSigning />} />
+            <Route path="/locations/union-county-loan-signing-agent" element={<UnionCountyLoanSigning />} />
+            <Route path="/title-company-attorney-closing-support-charlotte-nc" element={<TitleAttorneySupport />} />
 
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />

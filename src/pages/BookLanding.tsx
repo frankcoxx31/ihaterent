@@ -560,7 +560,7 @@ export default function BookLanding() {
                            end: endOfWeek(endOfMonth(currentMonth)) 
                          }).map((day, i) => {
                            const isCurrentMonth = isSameMonth(day, currentMonth);
-                           const isPast = day < new Date().setHours(0,0,0,0);
+                           const isPast = (day as any) < new Date().setHours(0, 0, 0, 0);
                            const isSelected = selectedDate && isSameDay(day, selectedDate);
                            return (
                              <button

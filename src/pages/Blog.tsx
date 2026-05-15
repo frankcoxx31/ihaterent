@@ -4,6 +4,13 @@ import { Link } from 'react-router-dom';
 export default function Blog() {
   const posts = [
     {
+      title: 'How Mobile Loan Signing Support Saves Your Closing Team Time (And Headaches)',
+      slug: 'mobile-loan-signing-support-saves-closing-team-time',
+      date: 'May 15, 2026',
+      excerpt: 'See how mobile loan signing support helps Charlotte title companies and closing attorneys reduce delays, handle overflow, and keep borrowers happy from start to finish.',
+      imageUrl: 'https://images.unsplash.com/photo-1554469384-e58fac16e23a?auto=format&fit=crop&q=80&w=800'
+    },
+    {
       title: 'Hospital Notary Services in Charlotte',
       slug: 'hospital-notary-services-charlotte',
       date: 'April 30, 2026',

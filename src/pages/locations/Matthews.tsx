@@ -1,5 +1,6 @@
 import CityPageLayout from '../../components/CityPageLayout';
 import { FileSignature, FileText, Laptop, Clock, HeartPulse, ShieldCheck } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Matthews() {
   return (
@@ -8,15 +9,17 @@ export default function Matthews() {
       image="https://images.unsplash.com/photo-1580655653885-65763b2597d0?auto=format&fit=crop&q=80&w=1920"
       introText={
         <>
-          Need a <strong>mobile notary in Matthews, NC</strong>? Integrity Closings CLT provides professional, on-demand notary services throughout the Matthews and Stallings area. Whether you are at a local coffee shop in <strong>Historic Downtown Matthews</strong>, a business near <strong>Windsor Square</strong>, or your own front door, we bring the notary office to you. We are committed to providing Matthews residents with secure, accurate, and stress-free notarizations for all their legal and financial documents.
+          Looking for a <strong>mobile notary in Matthews, NC</strong>? Integrity Closings CLT offers professional, on-demand general notary services for all your document needs. From power of attorney to vehicle titles, we bring the notary office to your home or office in Matthews.
+          <br /><br />
+          <em>Need a mortgage closing?</em> Visit our dedicated <Link to="/locations/matthews-loan-signing-agent" className="text-blue-600 font-bold hover:underline">Matthews Loan Signing Agent</Link> page for high-intent mortgage facilitation.
         </>
       }
       services={[
         {
-          title: "Loan Signing Services",
-          description: <>Expert handling of mortgages, refinances, HELOCs, and seller packages. We serve homeowners in neighborhoods like <strong>Brightmoor, Sardis Forest, and Providence Woods</strong>.</>,
+          title: "Loan Signing Specialty",
+          description: <>High-intent mortgage facilitation including refinances and purchases. Visit our dedicated <Link to="/locations/matthews-loan-signing-agent" className="text-blue-600 font-bold hover:underline">Matthews Loan Signing</Link> page.</>,
           icon: <FileSignature className="w-6 h-6 text-blue-600" />,
-          link: "/loan-signing-agent-charlotte-nc"
+          link: "/locations/matthews-loan-signing-agent"
         },
         {
           title: "Estate Planning Notary",

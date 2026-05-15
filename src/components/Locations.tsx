@@ -12,7 +12,13 @@ export default function Locations() {
       city: 'Concord',
       areas: 'China Grove, Kannapolis, Harrisburg, Mount Pleasant, Midland, Locust',
       image: '/concord.jpg',
-      link: '/locations/concord'
+      link: '/locations/concord-loan-signing-agent'
+    },
+    {
+      city: 'Mint Hill',
+      areas: 'Brighton Park, Farmwood, Olde Sycamore, Summerwood, Fairview Road',
+      image: '/matthews-1.jpg',
+      link: '/locations/mint-hill-loan-signing-agent'
     },
     {
       city: 'Gastonia',
@@ -36,7 +42,7 @@ export default function Locations() {
       city: 'Matthews',
       areas: 'Waxhaw, Indian Trail, Weddington, Stallings, Wesley Chapel, Mint Hill',
       image: '/matthews-1.jpg',
-      link: '/locations/matthews'
+      link: '/locations/matthews-loan-signing-agent'
     }
   ];
 

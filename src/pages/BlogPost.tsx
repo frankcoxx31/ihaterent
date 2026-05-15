@@ -1,10 +1,195 @@
 import { Calendar, User, ArrowLeft } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
 
 export default function BlogPost() {
   const { slug } = useParams();
 
+  useEffect(() => {
+    const seoData: Record<string, { title: string, description: string }> = {
+      'mobile-loan-signing-support-saves-closing-team-time': {
+        title: 'Mobile Loan Signing Support Saves Your Closing Team Time | Integrity Closings CLT',
+        description: 'See how mobile loan signing support helps Charlotte title companies and closing attorneys reduce delays, handle overflow, and keep borrowers happy from start to finish.'
+      },
+      'hospital-notary-services-charlotte': {
+        title: 'Hospital & Bedside Notary Charlotte NC | Integrity Closings CLT',
+        description: 'Learn why a specialized hospital notary is essential for Power of Attorney and healthcare directives in Charlotte medical facilities.'
+      }
+    };
+
+    const currentSeo = seoData[slug || ''];
+    if (currentSeo) {
+      document.title = currentSeo.title;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) {
+        metaDesc.setAttribute('content', currentSeo.description);
+      }
+    }
+  }, [slug]);
+
   const renderContent = () => {
+    if (slug === 'mobile-loan-signing-support-saves-closing-team-time') {
+      return (
+        <div className="prose prose-lg prose-slate max-w-none">
+          <div className="flex flex-wrap items-center text-slate-500 text-sm mb-8 gap-4 sm:gap-6 border-b border-slate-100 pb-8 font-sans">
+            <div className="flex items-center">
+              <User className="w-4 h-4 mr-2" />
+              Integrity Closings CLT
+            </div>
+            <div className="flex items-center">
+              <Calendar className="w-4 h-4 mr-2" />
+              May 15, 2026
+            </div>
+          </div>
+
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 mb-6 leading-tight font-sans">
+            How Mobile Loan Signing Support Saves Your Closing Team Time (And Headaches)
+          </h1>
+          
+          <p className="mb-6">
+            In the fast-paced real estate landscape of Charlotte and its surrounding communities, closing teams are under more pressure than ever. Between managing a high volume of transactions, navigating tighter lender timelines, and meeting the growing expectations of borrowers who want everything to be seamless, the workload can feel overwhelming.
+          </p>
+          <p className="mb-6">
+            For busy title companies and attorney offices across Mecklenburg, Cabarrus, and Union Counties, a reliable mobile loan signing agent is much more than just a convenience. They serve as a critical scheduling and workflow asset, acting as a professional extension of your office in the field. By delegating the final document execution to a trusted partner, your in-office staff can stay focused on clearing titles, coordinating with lenders, and preparing the next file for settlement.
+          </p>
+
+          <img 
+            src="https://images.unsplash.com/photo-1575328630187-44044968cd17?auto=format&fit=crop&q=80&w=1200" 
+            alt="Mobile loan signing agent supporting a borrower document signing appointment in Charlotte NC" 
+            className="w-full h-auto rounded-lg my-8 shadow-md" 
+            referrerPolicy="no-referrer"
+          />
+
+          <h2 className="text-2xl font-bold text-slate-900 mt-12 mb-4 border-b-2 border-slate-900 pb-2 font-sans">
+            The Real Cost of a Disorganized Signing Appointment
+          </h2>
+          <p className="mb-6">
+            We’ve all seen what happens when a signing appointment goes sideways. A borrower arrives confused about their terms, a signer is late because they couldn't find the office, or even worse: documents are returned with missing signatures or dates. These small administrative hurdles don’t just stay at the signing table; they ripple all the way back to your desk, causing stressful re-draws, funding delays, and frustrated clients.
+          </p>
+          <p className="mb-6">
+            When an appointment is poorly handled, it reflects directly on your reputation as a title company or attorney. You’ve spent weeks building trust with the borrower, only to have that experience tarnished in the final hour. This is why the "who" behind the signing matters just as much as the "what."
+          </p>
+          <p className="mb-6">
+            An experienced mobile signing agent arrives fully prepared, having pre-reviewed the loan package for specific lender requirements. They ensure the borrower feels at ease, guide them through the paperwork with professional clarity, and catch potential errors before they ever leave the table. This level of diligence protects your timeline and your brand.
+          </p>
+
+          <h2 className="text-2xl font-bold text-slate-900 mt-12 mb-4 border-b-2 border-slate-900 pb-2 font-sans">
+            What a Professional Mobile Signing Agent Actually Does For Your Team
+          </h2>
+          <p className="mb-6">
+            A professional mobile signer is essentially a logistics coordinator for your closing files. Instead of your staff spending hours on the phone trying to coordinate a time that works for the borrower to come into the office, the mobile agent handles the scheduling flexibility. We meet the borrowers where they are: whether that’s their home in Mint Hill, their workplace in Uptown Charlotte, or even a hospital in Matthews.
+          </p>
+          <p className="mb-6">
+            This "meet them where they are" approach removes one of the biggest friction points in the closing process: the commute. By offering after-hours and weekend appointments, we ensure that the signing happens on the borrower's terms, which leads to higher satisfaction and fewer last-minute cancellations.
+          </p>
+          <p className="mb-6">
+            Crucially, a top-tier signing agent keeps your office in the loop at every stage. You receive a confirmation when the appointment is set, a status update the moment the signing is complete, and tracking information for the returned documents. You are never left wondering if a file is on its way back; you have total visibility without having to make a single follow-up call.
+          </p>
+
+          <img 
+            src="https://images.unsplash.com/photo-1521791136064-7986c29596ba?auto=format&fit=crop&q=80&w=1200" 
+            alt="Loan signing agent coordinating closing documents for a title company appointment" 
+            className="w-full h-auto rounded-lg my-8 shadow-md" 
+            referrerPolicy="no-referrer"
+          />
+
+          <h2 className="text-2xl font-bold text-slate-900 mt-12 mb-4 border-b-2 border-slate-900 pb-2 font-sans">
+            Overflow Coverage Without the Staffing Headache
+          </h2>
+          <p className="mb-6">
+            Real estate is notoriously seasonal and volume-dependent. On the last day of the month, your office might be drowning in files, while mid-month is more manageable. Staffing for those peak "threddy" days is a constant challenge for Charlotte closing attorneys and title companies.
+          </p>
+          <p className="mb-6">
+            This is where mobile signing support shines as a scalable solution. Instead of hiring more full-time employees to handle seasonal spikes, you can use Integrity Closings CLT as your reliable overflow resource. We absorb those extra appointments seamlessly, giving you the capacity to take on more business without increasing your overhead.
+          </p>
+          <p className="mb-6">
+            Having a trusted field resource you can call for last-minute or same-day coverage in Charlotte, Concord, or Gastonia means you never have to say "no" to a client because your conference room is full. You have the flexibility to scale your operations up or down instantly.
+          </p>
+
+          <img 
+            src="https://images.unsplash.com/photo-1506784983877-45594efa4cbe?auto=format&fit=crop&q=80&w=1200" 
+            alt="Title company managing overflow closings with mobile signing agent support in Charlotte" 
+            className="w-full h-auto rounded-lg my-8 shadow-md" 
+            referrerPolicy="no-referrer"
+          />
+
+          <h2 className="text-2xl font-bold text-slate-900 mt-12 mb-4 border-b-2 border-slate-900 pb-2 font-sans">
+            The Borrower Experience Reflects on Your Brand
+          </h2>
+          <p className="mb-6">
+            For many borrowers, the signing appointment is the most memorable part of the entire transaction. It’s when the reality of their new home or their financial savings finally sets in. If that experience is rushed, disorganized, or impersonal, it reflects poorly on the title company or attorney who facilitated the deal.
+          </p>
+          <p className="mb-6">
+            A calm, professional, and organized signing agent acts as a brand ambassador for your office. At Integrity Closings CLT, we approach every appointment with the understanding that we represent your team. We treat borrowers with respect, answer their non-legal questions with confidence, and maintain a professional demeanor that reinforces the high-quality service you've provided throughout the transaction.
+          </p>
+
+          <img 
+            src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=1200" 
+            alt="Borrower completing a smooth loan signing appointment supported by Integrity Closings CLT" 
+            className="w-full h-auto rounded-lg my-8 shadow-md" 
+            referrerPolicy="no-referrer"
+          />
+
+          <h2 className="text-2xl font-bold text-slate-900 mt-12 mb-4 border-b-2 border-slate-900 pb-2 font-sans">
+            Serving Charlotte, Cabarrus County, Union County, and Surrounding Areas
+          </h2>
+          <p className="mb-6">
+            Our mobile coverage is designed to follow your clients wherever they are in the greater Charlotte region. We frequently handle appointments in Mint Hill, Matthews, and Uptown, but we also extend our reach deep into the surrounding communities.
+          </p>
+          <p className="mb-6">
+            Whether your borrower is in Waxhaw, Indian Trail, or Weddington in Union County; or you have a closing in Concord, Kannapolis, or Harrisburg in Cabarrus County, we go the extra mile. Our familiarity with the local geography and the specific recording requirements of different counties makes us a more efficient partner for your team.
+          </p>
+
+          <h2 className="text-2xl font-bold text-slate-900 mt-12 mb-4 border-b-2 border-slate-900 pb-2 font-sans">
+            Ready to Add Mobile Signing Support to Your Closing Pipeline?
+          </h2>
+          <p className="mb-6">
+            Streamlining your workflow starts with choosing the right partners. If your closing team is looking for a dependable field resource to handle mobile signings, manage overflow, and provide an exceptional borrower experience, Integrity Closings CLT is ready to help.
+          </p>
+          <p className="mb-10">
+            We invite Charlotte-area title companies and attorneys to reach out and discuss your upcoming scheduling needs. Let us show you how a professional mobile loan signing partner can save you time and eliminate the headaches of field coordination.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 mb-16">
+            <Link 
+              to="/title-company-attorney-closing-support-charlotte-nc" 
+              className="bg-blue-600 text-white px-8 py-4 rounded-lg font-bold hover:bg-blue-700 transition-colors text-center"
+            >
+              Closing Support Services
+            </Link>
+            <a 
+              href="tel:9803724103" 
+              className="bg-white text-blue-600 border-2 border-blue-600 px-8 py-4 rounded-lg font-bold hover:bg-blue-50 transition-colors text-center"
+            >
+              Call 980-372-4103
+            </a>
+          </div>
+
+          <div className="border-t border-slate-200 pt-16 mt-16">
+            <h3 className="text-2xl font-bold text-slate-900 mb-8 font-sans">Related Services</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+               <Link to="/loan-signing-agent-charlotte-nc" className="p-6 bg-white border border-slate-200 rounded-xl hover:shadow-md transition-shadow">
+                 <h4 className="font-bold text-slate-900 mb-2">Charlotte Loan Signing Agent</h4>
+                 <p className="text-slate-600 text-sm">Professional mobile loan document signing for your mortgage appointments.</p>
+               </Link>
+               <Link to="/title-company-attorney-closing-support-charlotte-nc" className="p-6 bg-white border border-slate-200 rounded-xl hover:shadow-md transition-shadow">
+                 <h4 className="font-bold text-slate-900 mb-2">Title Company & Attorney Closing Support</h4>
+                 <p className="text-slate-600 text-sm">Dedicated B2B support for professional closing teams.</p>
+               </Link>
+               <Link to="/locations/cabarrus-county-loan-signing-agent" className="p-6 bg-white border border-slate-200 rounded-xl hover:shadow-md transition-shadow">
+                 <h4 className="font-bold text-slate-900 mb-2">Cabarrus County Loan Signing</h4>
+                 <p className="text-slate-600 text-sm">Mobile coverage for Concord, Kannapolis, and Harrisburg.</p>
+               </Link>
+               <Link to="/locations/union-county-loan-signing-agent" className="p-6 bg-white border border-slate-200 rounded-xl hover:shadow-md transition-shadow">
+                 <h4 className="font-bold text-slate-900 mb-2">Union County Loan Signing</h4>
+                 <p className="text-slate-600 text-sm">Mobile coverage for Monroe, Waxhaw, and Indian Trail.</p>
+               </Link>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     if (slug === 'hospital-notary-services-charlotte') {
       return (
         <div className="prose prose-lg prose-slate max-w-none">
@@ -1069,8 +1254,8 @@ export default function BlogPost() {
   return (
     <div className="bg-slate-50 min-h-screen py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Link to="/resources" className="inline-flex items-center text-slate-600 hover:text-blue-600 mb-8 transition-colors">
-          <ArrowLeft className="w-4 h-4 mr-2" /> Back to Resources
+        <Link to="/blog" className="inline-flex items-center text-slate-600 hover:text-blue-600 mb-8 transition-colors">
+          <ArrowLeft className="w-4 h-4 mr-2" /> Back to Blog
         </Link>
 
         <article className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden p-8 sm:p-12 font-serif text-slate-800 leading-relaxed">
