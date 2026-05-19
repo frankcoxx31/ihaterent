@@ -43,11 +43,10 @@ async function startServer() {
     if (clientEmail === 'undefined' || clientEmail === 'null' || !clientEmail) clientEmail = null;
     if (calendarId === 'undefined' || calendarId === 'null' || !calendarId) calendarId = null;
 
-    // 3. Fallback to baked-in credentials if still missing or looks like a personal email
-    // Service account emails MUST end in .gserviceaccount.com
+    // 3. Service account emails MUST end in .gserviceaccount.com
     const isServiceAccountEmail = clientEmail && clientEmail.includes('.gserviceaccount.com');
     let credentialsObj: any = null;
-    
+
     if (!privateKey || !isServiceAccountEmail || (privateKey && privateKey.length < 100)) {
       fallbackStatus = "FALLBACK_FILE_MISSING_OR_INVALID";
     }
@@ -56,21 +55,18 @@ async function startServer() {
     if (privateKey && typeof privateKey === 'string') {
       const cleanKey = (key: string) => {
         if (!key) return key;
-        
-        // 1. Basic trimming and quote removal (handling potential double-quoted env vars)
+
         let processed = key.trim();
-        while ((processed.startsWith('"') && processed.endsWith('"')) || 
+        while ((processed.startsWith('"') && processed.endsWith('"')) ||
                (processed.startsWith("'") && processed.endsWith("'"))) {
           processed = processed.substring(1, processed.length - 1).trim();
         }
 
-        // 2. Handle escaped newlines (very common in env vars)
         processed = processed.replace(/\\n/g, '\n');
-        
-        // 3. Normalize headers (case-insensitive and whitespace-tolerant)
+
         const headerPattern = /-----[\s]*BEGIN[\s]+(?:RSA[\s]+)?PRIVATE[\s]+KEY[\s]*-----/i;
         const footerPattern = /-----[\s]*END[\s]+(?:RSA[\s]+)?PRIVATE[\s]+KEY[\s]*-----/i;
-        
+
         let body = processed;
         const headerMatch = processed.match(headerPattern);
         const footerMatch = processed.match(footerPattern);
@@ -80,16 +76,11 @@ async function startServer() {
           const end = footerMatch.index!;
           body = processed.substring(start, end);
         }
-        
-        // 4. Clean the body: remove ALL whitespace, non-base64 characters
-        // We only keep characters that are valid in base64: A-Z, a-z, 0-9, +, /, =
+
         const cleanBody = body.replace(/[^A-Za-z0-9+/=]/g, '');
-        
-        // 5. Reconstruct with standard format
-        // Node's crypto (used by google-auth-library) is most compatible with exactly this format
         return `-----BEGIN PRIVATE KEY-----\n${cleanBody}\n-----END PRIVATE KEY-----\n`;
       };
-      
+
       privateKey = cleanKey(privateKey);
     }
 
@@ -101,7 +92,6 @@ async function startServer() {
       clientEmail = clientEmail.replace(/['"]/g, '').trim();
     }
 
-    // If we don't have a credentials object yet (from fallback), create one for fromJSON
     if (!credentialsObj && privateKey && clientEmail) {
       credentialsObj = {
         client_email: clientEmail,
@@ -118,14 +108,13 @@ async function startServer() {
     if (!credentialsObj || !credentialsObj.private_key || !credentialsObj.client_email) {
       return null;
     }
-    
-    // Explicitly use JWT constructor for maximum control over parameters
+
     const auth = new google.auth.JWT({
       email: credentialsObj.client_email,
       key: credentialsObj.private_key,
       scopes: ['https://www.googleapis.com/auth/calendar']
     });
-    
+
     return auth;
   };
 
@@ -148,14 +137,14 @@ async function startServer() {
       if (credentialsObj && calendarId) {
         const auth = getGoogleAuth(credentialsObj);
         if (!auth) throw new Error("Could not initialize auth client");
-        
+
         const token = await auth.authorize();
         authTest = `SUCCESS: Token acquired! (Expires: ${new Date(token.expiry_date || 0).toLocaleTimeString()})`;
-        
+
         const calendar = google.calendar({ version: 'v3', auth });
         const calendarInfo = await calendar.calendars.get({ calendarId });
-        const events = await calendar.events.list({ 
-          calendarId, 
+        const events = await calendar.events.list({
+          calendarId,
           maxResults: 1,
           timeMin: new Date().toISOString()
         });
@@ -206,6 +195,7 @@ async function startServer() {
         GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY ? (process.env.GOOGLE_PRIVATE_KEY === 'undefined' ? 'UNDEFINED_STRING' : 'CONFIGURED') : 'MISSING',
         GOOGLE_SERVICE_ACCOUNT_EMAIL: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL ? (process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL === 'undefined' ? 'UNDEFINED_STRING' : 'CONFIGURED') : 'MISSING',
         GOOGLE_SERVICE_ACCOUNT_JSON: process.env.GOOGLE_SERVICE_ACCOUNT_JSON ? 'CONFIGURED' : 'MISSING',
+        CRM_OWNER_USER_ID: process.env.CRM_OWNER_USER_ID ? 'CONFIGURED' : 'MISSING',
         NODE_ENV: process.env.NODE_ENV || 'development'
       }
     });
@@ -216,7 +206,7 @@ async function startServer() {
   const ENABLE_CRM_SYNC = true;
 
   /**
-   * Helper to generate a 9-character alphanumeric ID for CRM records
+   * Generates a 9-character alphanumeric ID for new CRM customer records.
    */
   function generateCrmId() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -228,70 +218,81 @@ async function startServer() {
   }
 
   /**
-   * Helper to sync a customer record to the CRM Firestore collection.
+   * Syncs a customer record to the CRM /customers Firestore collection.
+   * - Deduplicates by email first, then phone.
+   * - Creates a new record if no match found.
+   * - Updates the existing record if a match is found.
+   * - Throws on any failure so the caller can return a proper 500.
    */
   async function syncToCrm(customerData: any) {
-    const ownerUserId = process.env.CRM_OWNER_USER_ID;
     console.log(`[CRM] syncToCrm called for: ${customerData.email || 'no-email'}`);
-    
+
+    // ── Guard: Firebase not initialized ───────────────────────────────────────
     if (!adminDb) {
-      console.error('[CRM] ERROR: Firestore Admin SDK (adminDb) is not initialized.');
-      return null;
+      const msg = '[CRM] FATAL: adminDb is null. Firebase Admin SDK did not initialize. Check GOOGLE_SERVICE_ACCOUNT_JSON in Hostinger.';
+      console.error(msg);
+      throw new Error(msg);
     }
 
+    // ── Guard: Feature flag ────────────────────────────────────────────────────
     if (!ENABLE_CRM_SYNC) {
       console.log('[CRM] Sync skipped: ENABLE_CRM_SYNC is false.');
       return null;
     }
 
-    if (!ownerUserId) {
-      console.error('[CRM] CONFIG ERROR: CRM_OWNER_USER_ID is missing from environment variables. CRM sync failed.');
-      return null;
+    // ── Guard: CRM owner UID required ─────────────────────────────────────────
+    const ownerUserId = process.env.CRM_OWNER_USER_ID;
+    if (!ownerUserId || ownerUserId === 'undefined' || ownerUserId === 'null' || ownerUserId.trim() === '') {
+      const msg = '[CRM] FATAL: CRM_OWNER_USER_ID is missing or empty. Set it in Hostinger environment variables.';
+      console.error(msg);
+      throw new Error(msg);
     }
 
     console.log(`[CRM] Using Owner UID: ${ownerUserId}`);
 
     try {
       const { email, phone, firstName, lastName } = customerData;
-      
-      // 1. Deduplication logic: check by email first, then phone
-      let existingDoc = null;
+
+      // ── Deduplication: email first, then phone ─────────────────────────────
+      let existingDoc: FirebaseFirestore.QueryDocumentSnapshot | null = null;
 
       if (email) {
-        console.log(`[CRM] Searching for existing customer with email: ${email}`);
-        const emailQuery = await adminDb.collection(CRM_CUSTOMER_COLLECTION)
+        console.log(`[CRM] Dedup check — searching by email: ${email}`);
+        const emailQuery = await adminDb
+          .collection(CRM_CUSTOMER_COLLECTION)
           .where('userId', '==', ownerUserId)
           .where('email', '==', email)
           .limit(1)
           .get();
         if (!emailQuery.empty) {
           existingDoc = emailQuery.docs[0];
-          console.log(`[CRM] Found match by email: ${existingDoc.id}`);
+          console.log(`[CRM] Dedup match found by email. Existing doc ID: ${existingDoc.id}`);
         }
       }
 
       if (!existingDoc && phone) {
-        console.log(`[CRM] Searching for existing customer with phone: ${phone}`);
-        const phoneQuery = await adminDb.collection(CRM_CUSTOMER_COLLECTION)
+        console.log(`[CRM] Dedup check — searching by phone: ${phone}`);
+        const phoneQuery = await adminDb
+          .collection(CRM_CUSTOMER_COLLECTION)
           .where('userId', '==', ownerUserId)
           .where('phone', '==', phone)
           .limit(1)
           .get();
         if (!phoneQuery.empty) {
           existingDoc = phoneQuery.docs[0];
-          console.log(`[CRM] Found match by phone: ${existingDoc.id}`);
+          console.log(`[CRM] Dedup match found by phone. Existing doc ID: ${existingDoc.id}`);
         }
       }
 
       const now = new Date().toISOString();
       const fullName = `${firstName || ''} ${lastName || ''}`.trim();
-      
-      // Target payload following CRM schema
+
+      // ── Payload — matches exact CRM customer schema ────────────────────────
       const payload = {
         userId: ownerUserId,
         firstName: firstName || '',
         lastName: lastName || '',
-        fullName: fullName || '',
+        fullName: fullName,
         email: email || '',
         phone: phone || '',
         address: customerData.streetAddress || customerData.address || '',
@@ -303,77 +304,111 @@ async function startServer() {
         source: 'website',
         status: 'new',
         updatedAt: now,
-        updatedBy: 'website-form'
+        updatedBy: 'website-form',
       };
 
       if (existingDoc) {
-        console.log(`[CRM] Updating existing customer record: ${existingDoc.id}`);
+        // ── Update existing record ───────────────────────────────────────────
+        console.log(`[CRM] Updating existing customer: ${existingDoc.id}`);
         await existingDoc.ref.update(payload);
+        console.log(`[CRM] Update successful for: ${existingDoc.id}`);
         return existingDoc.id;
       } else {
+        // ── Create new record ────────────────────────────────────────────────
         const customId = generateCrmId();
-        console.log(`[CRM] Creating NEW customer record with ID: ${customId}`);
-        await adminDb.collection(CRM_CUSTOMER_COLLECTION).doc(customId).set({
+        const newRecord = {
           ...payload,
           id: customId,
           createdAt: now,
           createdBy: 'website-form',
-          tags: ['website-lead']
-        });
-        console.log(`[CRM] Successfully created customer: ${customId}`);
+          tags: ['website-lead'],
+        };
+        console.log(`[CRM] Creating new customer record. ID: ${customId}`);
+        await adminDb.collection(CRM_CUSTOMER_COLLECTION).doc(customId).set(newRecord);
+        console.log(`[CRM] New customer created successfully. ID: ${customId}`);
         return customId;
       }
-    } catch (error) {
-      console.error('[CRM] Sync Error Exception:', error);
+    } catch (error: any) {
+      console.error('[CRM] Firestore write failed:', error.message);
+      console.error('[CRM] Full error:', error);
       throw error;
     }
   }
 
-  // API route to handle contact form and CRM customer creation
+  // API route to handle contact form submissions and CRM customer creation
   app.post('/api/contact', async (req, res) => {
     console.log('[API] Received POST /api/contact');
-    console.log('[API] Request Body:', JSON.stringify(req.body, null, 2));
+    console.log('[API] Request body:', JSON.stringify(req.body, null, 2));
+
+    // ── Startup guards — catch missing config before doing any work ───────────
+    if (!adminDb) {
+      console.error('[API] /api/contact blocked: adminDb is null. Firebase did not initialize.');
+      return res.status(500).json({
+        error: 'Server configuration error: Firebase is not initialized. Contact the site administrator.'
+      });
+    }
+
+    const ownerUserId = process.env.CRM_OWNER_USER_ID;
+    if (!ownerUserId || ownerUserId === 'undefined' || ownerUserId.trim() === '') {
+      console.error('[API] /api/contact blocked: CRM_OWNER_USER_ID is not set in environment variables.');
+      return res.status(500).json({
+        error: 'Server configuration error: CRM owner not configured. Contact the site administrator.'
+      });
+    }
 
     try {
       const { firstName, lastName, email, phone, message } = req.body;
-      
+
       if (!firstName || !lastName || !email) {
-        console.warn('[API] Validation failed: Missing required fields');
-        return res.status(400).json({ error: 'Missing required fields' });
+        console.warn('[API] Validation failed: firstName, lastName, and email are required.');
+        return res.status(400).json({ error: 'Missing required fields: firstName, lastName, email' });
       }
 
-      // 1. Save to a general "messages" collection for this website specifically
-      if (adminDb) {
-        console.log('[API] Saving to "messages" collection...');
+      // ── 1. Save raw message to /messages collection (non-fatal if it fails) ─
+      console.log('[API] Saving to "messages" collection...');
+      try {
         await adminDb.collection('messages').add({
           firstName,
           lastName,
           email,
-          phone: phone || "",
-          message: message || "",
-          createdAt: new Date().toISOString()
+          phone: phone || '',
+          message: message || '',
+          createdAt: new Date().toISOString(),
         });
         console.log('[API] Saved to "messages" successfully.');
-      } else {
-        console.warn('[API] adminDb not available for "messages" save.');
+      } catch (msgError: any) {
+        console.error('[API] Failed to save to "messages" collection (non-fatal):', msgError.message);
       }
 
-      // 2. Sync to CRM as a customer record
+      // ── 2. Sync to CRM /customers collection ──────────────────────────────
       console.log('[API] Initiating CRM sync...');
       const customerId = await syncToCrm({
         firstName,
         lastName,
         email,
-        phone: phone || "",
-        notes: message || "",
-        customerType: 'General Client'
+        phone: phone || '',
+        notes: message || '',
+        customerType: 'General Client',
       });
-      console.log(`[API] CRM sync completed. CustomerID: ${customerId || 'NONE'}`);
 
-      res.json({ success: true, customerId });
-    } catch (error) {
-      console.error('[API] Contact API Error Exception:', error);
-      res.status(500).json({ error: 'Internal server error', details: error.message });
+      if (!customerId) {
+        // syncToCrm throws on failure, but guard the null case explicitly
+        console.error('[API] syncToCrm returned null without throwing. Customer record was NOT created.');
+        return res.status(500).json({
+          error: 'CRM sync failed: customer record was not created. Check server logs for details.'
+        });
+      }
+
+      console.log(`[API] CRM sync successful. Customer ID: ${customerId}`);
+      return res.json({ success: true, customerId });
+
+    } catch (error: any) {
+      console.error('[API] /api/contact unhandled error:', error.message);
+      console.error('[API] Full error:', error);
+      return res.status(500).json({
+        error: 'Internal server error',
+        details: error.message
+      });
     }
   });
 
@@ -411,20 +446,20 @@ async function startServer() {
         requestBody: event,
       });
 
-      // Save to Firebase
+      // Save to Firebase bookings collection
       try {
         if (adminDb) {
           await adminDb.collection('bookings').add({
             first_name: firstName,
             last_name: lastName,
             email,
-            phone: phone || "",
-            address: address || "",
-            notes: notes || "",
+            phone: phone || '',
+            address: address || '',
+            notes: notes || '',
             service_name: serviceName,
             start_time: startTime,
             end_time: endTime,
-            created_at: new Date().toISOString() // Using ISO string for now to match rules isValidBooking check
+            created_at: new Date().toISOString()
           });
           console.log('Booking saved to Firebase successfully');
         } else {
@@ -436,16 +471,16 @@ async function startServer() {
 
       res.json({ success: true });
 
-      // After booking, also sync the customer to CRM
+      // After responding, sync the customer to CRM (non-blocking)
       try {
         await syncToCrm({
           firstName,
           lastName,
           email,
-          phone: phone || "",
-          notes: notes || "",
+          phone: phone || '',
+          notes: notes || '',
           customerType: 'General Client',
-          streetAddress: address || "",
+          streetAddress: address || '',
           city: '',
           state: '',
           zip: ''
@@ -462,9 +497,9 @@ async function startServer() {
   // API route to check calendar availability
   app.post('/api/availability', async (req, res) => {
     try {
-      const { date } = req.body; // e.g., "2023-10-25"
+      const { date } = req.body;
       console.log('Checking availability for date:', date);
-      
+
       const { credentialsObj, calendarId } = await getGoogleCredentials();
 
       if (!credentialsObj || !calendarId) {
@@ -476,19 +511,10 @@ async function startServer() {
 
       const calendar = google.calendar({ version: 'v3', auth });
 
-      // Set time range for the requested date in America/New_York
-      // The frontend sends selectedDate.toISOString() which is browser-local midnight in UTC.
-      // We want to ensure we query the full 24h window for that calendar date.
       const baseDate = new Date(date);
-      
-      // Calculate midnight NY in UTC (roughly 4-5 hours offset)
-      // A safe way is to just take the date part and create a UTC range that covers any possible NY window.
-      // More precisely, we can just use the date sent as a baseline.
       const timeMin = new Date(baseDate.getTime());
       timeMin.setUTCHours(0, 0, 0, 0);
-      // Extend the search range slightly to ensure we catch any overlapping events (e.g. 12h before and 12h after)
-      // to be absolutely sure we don't miss UTC shifts.
-      const queryMin = new Date(timeMin.getTime() - 12 * 60 * 60 * 1000); 
+      const queryMin = new Date(timeMin.getTime() - 12 * 60 * 60 * 1000);
       const queryMax = new Date(timeMin.getTime() + 36 * 60 * 60 * 1000);
 
       console.log('Querying FreeBusy range:', { min: queryMin.toISOString(), max: queryMax.toISOString() });
@@ -512,7 +538,7 @@ async function startServer() {
     }
   });
 
-  // API route to provide config to the frontend (e.g. Gemini key)
+  // API route to provide config to the frontend
   app.get('/api/config', (req, res) => {
     res.json({
       geminiKey: process.env.GEMINI_API_KEY || ''
@@ -540,10 +566,8 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    // In production, the server file is at dist/server.mjs
-    // Static files are in the same folder as siblings
     const distPath = path.join(process.cwd(), 'dist');
-    
+
     console.log('[Setup] Production mode detected');
     console.log('[Setup] Working directory:', process.cwd());
     console.log('[Setup] Serving static files from:', distPath);
