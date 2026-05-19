@@ -198,6 +198,35 @@ async function startServer() {
         requestBody: event,
       });
 
+      // Save to Supabase if configured
+      try {
+        if (process.env.VITE_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+          const supabaseServer = getSupabaseServer();
+          const { error: sbError } = await supabaseServer
+            .from('bookings')
+            .insert([{
+              first_name: firstName,
+              last_name: lastName,
+              email,
+              phone,
+              address,
+              notes,
+              service_name: serviceName,
+              start_time: startTime,
+              end_time: endTime,
+              created_at: new Date().toISOString()
+            }]);
+          
+          if (sbError) {
+            console.error('Supabase Booking Insert Error (Non-blocking):', sbError);
+          } else {
+            console.log('Booking saved to Supabase successfully');
+          }
+        }
+      } catch (sbE) {
+        console.error('Supabase Booking Exception (Non-blocking):', sbE);
+      }
+
       res.json({ success: true });
     } catch (error) {
       console.error('Calendar API Error:', error);
