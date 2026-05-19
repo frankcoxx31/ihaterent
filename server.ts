@@ -54,42 +54,48 @@ async function startServer() {
 
     // 4. Clean the private key
     if (privateKey && typeof privateKey === 'string') {
-      // Remove any surrounding quotes and whitespace
-      privateKey = privateKey.trim();
-      
-      // Remove surrounding quotes again in case of double quoting like '"..."'
-      if ((privateKey.startsWith('"') && privateKey.endsWith('"')) || 
-          (privateKey.startsWith("'") && privateKey.endsWith("'"))) {
-        privateKey = privateKey.substring(1, privateKey.length - 1).trim();
-      }
-
-      // If it contains escaped newlines, replace them with actual newlines
-      if (privateKey.includes('\\n')) {
-        privateKey = privateKey.replace(/\\n/g, '\n');
-      }
-
-      // Ensure standard header/footer are present and correctly formatted
-      if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
-        // Strip everything that isn't base64-like and wrap it
-        const base64Part = privateKey.replace(/-----BEGIN PRIVATE KEY-----/g, '')
-                                     .replace(/-----END PRIVATE KEY-----/g, '')
-                                     .replace(/\s/g, '');
-        privateKey = `-----BEGIN PRIVATE KEY-----\n${base64Part}\n-----END PRIVATE KEY-----\n`;
-      } else {
-        // Standardize existing headers - sometimes they come with extra spaces or missing newlines
-        // First, normalize all whitespace to space
-        let parts = privateKey.split('-----');
-        if (parts.length >= 5) {
-          // parts[0] is prefix, parts[1] is "BEGIN ...", parts[2] is key, parts[3] is "END ...", parts[4] is suffix
-          const keyPart = parts[2].replace(/\s/g, '');
-          privateKey = `-----BEGIN PRIVATE KEY-----\n${keyPart}\n-----END PRIVATE KEY-----\n`;
+      const cleanKey = (key: string) => {
+        // Remove surrounding quotes and whitespace
+        let processed = key.trim().replace(/^["']|["']$/g, "").trim();
+        
+        // Handle double quotes from being saved in env twice
+        if ((processed.startsWith('"') && processed.endsWith('"')) || 
+            (processed.startsWith("'") && processed.endsWith("'"))) {
+          processed = processed.substring(1, processed.length - 1).trim();
         }
-      }
+
+        // Handle escaped newlines (very common in env vars)
+        processed = processed.replace(/\\n/g, '\n');
+        
+        // Extract the base64 part from between headers if they exist
+        // This regex is very forgiving of internal whitespace
+        const match = processed.match(/-----BEGIN (?:RSA )?PRIVATE KEY-----([\s\S]*)-----END (?:RSA )?PRIVATE KEY-----/);
+        
+        if (match) {
+          // Normalize the body by removing ALL whitespace/newlines
+          const base64Body = match[1].replace(/\s/g, '');
+          // Re-wrap with standard headers and a single newline
+          return `-----BEGIN PRIVATE KEY-----\n${base64Body}\n-----END PRIVATE KEY-----\n`;
+        }
+        
+        // If no headers found, but it looks like a long base64 string, wrap it
+        const simpleBase64 = processed.replace(/\s/g, '');
+        if (simpleBase64.length > 500) {
+          return `-----BEGIN PRIVATE KEY-----\n${simpleBase64}\n-----END PRIVATE KEY-----\n`;
+        }
+        
+        return processed;
+      };
+      
+      privateKey = cleanKey(privateKey);
     }
 
-    // 5. Clean Calendar ID
+    // 5. Clean Calendar ID and Email
     if (calendarId && typeof calendarId === 'string') {
       calendarId = calendarId.replace(/['"]/g, '').trim();
+    }
+    if (clientEmail && typeof clientEmail === 'string') {
+      clientEmail = clientEmail.replace(/['"]/g, '').trim();
     }
 
     // If we don't have a credentials object yet (from fallback), create one for fromJSON
@@ -129,7 +135,9 @@ async function startServer() {
     let keyPreview = "NONE";
 
     if (privateKey) {
-      keyPreview = `${privateKey.substring(0, 20)}... (Length: ${privateKey.length})`;
+      const head = privateKey.substring(0, 30);
+      const tail = privateKey.substring(privateKey.length - 30);
+      keyPreview = `HEAD: [${head}] ... TAIL: [${tail}] (Total Length: ${privateKey.length})`;
     }
 
     try {
