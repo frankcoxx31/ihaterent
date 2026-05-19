@@ -406,10 +406,12 @@ async function startServer() {
         },
       };
 
-      await calendar.events.insert({
+      const calendarEvent = await calendar.events.insert({
         calendarId: calendarId,
         requestBody: event,
       });
+      const googleCalendarEventId = calendarEvent.data.id || '';
+      console.log(`[API] Google Calendar event created. ID: ${googleCalendarEventId}`);
 
       // Save to Firebase
       try {
@@ -432,6 +434,104 @@ async function startServer() {
         }
       } catch (fbE) {
         console.error('Firebase Booking Error (Non-blocking):', fbE);
+      }
+
+      // Write appointment to CRM /appointments collection
+      try {
+        if (adminDb) {
+          const ownerUserId = process.env.CRM_OWNER_USER_ID;
+          if (!ownerUserId) {
+            console.error('[CRM] CRM_OWNER_USER_ID missing — skipping appointment write.');
+          } else {
+            const startDate = new Date(startTime);
+
+            const dateStr = startDate.toLocaleDateString('en-CA', {
+              timeZone: 'America/New_York'
+            });
+
+            const timeStr = startDate.toLocaleTimeString('en-US', {
+              timeZone: 'America/New_York',
+              hour: 'numeric',
+              minute: '2-digit',
+              hour12: true
+            });
+
+            const sortableDateTime = startDate.toISOString();
+            const appointmentId = generateCrmId();
+            const now = new Date().toISOString();
+
+            const appointmentRecord = {
+              id: appointmentId,
+              userId: ownerUserId,
+              firstName: firstName || '',
+              lastName: lastName || '',
+              customerName: `${firstName || ''} ${lastName || ''}`.trim(),
+              email: email || '',
+              phone: phone || '',
+              address: address || '',
+              city: '',
+              state: '',
+              zip: '',
+              location: address || '',
+              date: dateStr,
+              time: timeStr,
+              sortableDateTime: sortableDateTime,
+              notes: notes || '',
+              signingType: serviceName || 'General Notary',
+              actType: '',
+              docType: '',
+              docs: [],
+              status: 'Scheduled',
+              fee: 0,
+              agreedFee: 0,
+              offeredFee: 0,
+              amountCollected: 0,
+              amountOutstanding: 0,
+              estimatedProfit: 0,
+              totalJobCost: 0,
+              travelCost: 0,
+              printingCost: 0,
+              otherSigningCost: 0,
+              parkingTollsCost: 0,
+              milesDriven: 0,
+              mileageRate: 0.725,
+              roundTripMiles: true,
+              profitMarginPercent: 0,
+              paymentStatus: 'Not Sent',
+              paymentMethod: '',
+              paymentDueDate: '',
+              invoiceNumber: '',
+              invoiceSent: false,
+              scanbackStatus: 'Not Required',
+              companyId: '',
+              companyName: '',
+              signingCompany: '',
+              signers: [
+                {
+                  id: generateCrmId(),
+                  firstName: firstName || '',
+                  lastName: lastName || '',
+                  email: email || '',
+                  phone: phone || '',
+                  address: address || '',
+                  city: '',
+                  state: '',
+                  zip: ''
+                }
+              ],
+              googleCalendarEventId: googleCalendarEventId,
+              source: 'website',
+              createdBy: 'website-form',
+              createdAt: now,
+              updatedAt: now,
+            };
+
+            await adminDb.collection('appointments').doc(appointmentId).set(appointmentRecord);
+            console.log(`[CRM] Appointment created successfully. ID: ${appointmentId}`);
+          }
+        }
+      } catch (apptE: any) {
+        console.error('[CRM] Appointment write error (non-blocking):', apptE.message);
       }
 
       res.json({ success: true });
