@@ -11,7 +11,7 @@ const __dirname = path.dirname(__filename);
 
 async function startServer() {
   const app = express();
-  const PORT = process.env.PORT || 3000;
+  const PORT = Number(process.env.PORT) || 3000;
 
   app.use(express.json());
 
@@ -47,30 +47,10 @@ async function startServer() {
     // 3. Fallback to baked-in credentials if still missing or looks like a personal email
     // Service account emails MUST end in .gserviceaccount.com
     const isServiceAccountEmail = clientEmail && clientEmail.includes('.gserviceaccount.com');
-    let credentialsObj = null;
+    let credentialsObj: any = null;
     
     if (!privateKey || !isServiceAccountEmail || (privateKey && privateKey.length < 100)) {
-      fallbackStatus = "ATTEMPTING_FALLBACK_FILE";
-      try {
-        const secretPath = path.join(__dirname, 'calendar-secret.js');
-        if (fs.existsSync(secretPath)) {
-          const { ENCODED_CREDENTIALS } = await import('./calendar-secret.js');
-          const cleanEncoded = ENCODED_CREDENTIALS.trim();
-          const decoded = Buffer.from(cleanEncoded, 'base64').toString('utf8');
-          credentialsObj = JSON.parse(decoded);
-          
-          // Force fallback if the current ones are broken or not service account
-          privateKey = credentialsObj.private_key;
-          clientEmail = credentialsObj.client_email;
-          source = "FALLBACK_FILE";
-          fallbackStatus = "FALLBACK_FILE_SUCCESS";
-        } else {
-          fallbackStatus = "FALLBACK_FILE_MISSING";
-        }
-      } catch (e) {
-        fallbackStatus = "FALLBACK_FILE_FAILED";
-        fallbackError = e.message;
-      }
+      fallbackStatus = "FALLBACK_FILE_MISSING_OR_INVALID";
     }
 
     // 4. Clean the private key
@@ -117,11 +97,11 @@ async function startServer() {
     try {
       if (credentialsObj && calendarId) {
         // Use fromJSON for maximum compatibility
-        const auth = google.auth.fromJSON(credentialsObj);
+        const auth = google.auth.fromJSON(credentialsObj) as any;
         auth.scopes = ['https://www.googleapis.com/auth/calendar'];
         
         const token = await auth.authorize();
-        authTest = `SUCCESS: Token acquired! (Expires: ${new Date(token.expiry_date).toLocaleTimeString()})`;
+        authTest = `SUCCESS: Token acquired! (Expires: ${new Date(token.expiry_date || 0).toLocaleTimeString()})`;
         
         const calendar = google.calendar({ version: 'v3', auth });
         const events = await calendar.events.list({ 
@@ -194,7 +174,7 @@ async function startServer() {
         return res.status(500).json({ error: 'Calendar credentials not configured' });
       }
 
-      const auth = google.auth.fromJSON(credentialsObj);
+      const auth = google.auth.fromJSON(credentialsObj) as any;
       auth.scopes = ['https://www.googleapis.com/auth/calendar'];
 
       const calendar = google.calendar({ version: 'v3', auth });
@@ -215,7 +195,7 @@ async function startServer() {
 
       await calendar.events.insert({
         calendarId: calendarId,
-        resource: event,
+        requestBody: event,
       });
 
       res.json({ success: true });
@@ -237,7 +217,7 @@ async function startServer() {
         return res.status(500).json({ error: 'Calendar credentials not configured' });
       }
 
-      const auth = google.auth.fromJSON(credentialsObj);
+      const auth = google.auth.fromJSON(credentialsObj) as any;
       auth.scopes = ['https://www.googleapis.com/auth/calendar'];
 
       const calendar = google.calendar({ version: 'v3', auth });
