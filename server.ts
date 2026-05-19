@@ -1,7 +1,6 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { createServer as createViteServer } from 'vite';
 import fs from 'fs';
 import { google } from 'googleapis';
 import { adminDb } from './src/lib/firebaseServer';
@@ -282,15 +281,34 @@ async function startServer() {
 
   // Vite middleware for development
   if (process.env.NODE_ENV !== 'production') {
-    const vite = await createViteServer({
+    const { createServer } = await import('vite');
+    const vite = await createServer({
       server: { middlewareMode: true },
       appType: 'spa',
     });
     app.use(vite.middlewares);
   } else {
-    app.use(express.static(path.join(__dirname, 'dist')));
+    // In production, the server file is at dist/server.mjs
+    // Static files are in the same folder as siblings
+    const distPath = path.join(process.cwd(), 'dist');
+    
+    console.log('[Setup] Production mode detected');
+    console.log('[Setup] Working directory:', process.cwd());
+    console.log('[Setup] Serving static files from:', distPath);
+
+    if (!fs.existsSync(distPath)) {
+      console.error('[Error] dist directory not found at', distPath);
+    }
+
+    app.use(express.static(distPath));
     app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+      const indexPath = path.join(distPath, 'index.html');
+      if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+      } else {
+        console.error('[Error] index.html not found at', indexPath);
+        res.status(404).send('index.html not found. Check server logs.');
+      }
     });
   }
 
@@ -299,4 +317,8 @@ async function startServer() {
   });
 }
 
-startServer();
+startServer().catch(err => {
+  console.error('!!! FATAL SERVER ERROR ON STARTUP !!!');
+  console.error(err);
+  process.exit(1);
+});
