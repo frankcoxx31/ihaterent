@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
 import fs from 'fs';
 import { google } from 'googleapis';
-import { getSupabaseServer } from './src/lib/supabaseServer';
+import { adminDb } from './src/lib/firebaseServer';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -123,29 +123,21 @@ async function startServer() {
       console.error('Health Check Auth Error:', error);
     }
 
-    // Test Supabase Connection
-    let supabaseStatus = "NOT_CONFIGURED";
-    let supabaseError = null;
+    // Test Firebase Connection
+    let firebaseStatus = "NOT_CONFIGURED";
+    let firebaseError = null;
     try {
-      if (process.env.VITE_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
-        const supabaseServer = getSupabaseServer();
-        const { data, error } = await supabaseServer.from('_test_health').select('*').limit(1);
-        // Note: _test_health might not exist, but valid API communication is enough
-        if (error && error.code !== 'PGRST116' && error.message !== 'relation "_test_health" does not exist') {
-           supabaseStatus = `FAILED: ${error.message}`;
-           supabaseError = error;
-        } else {
-           supabaseStatus = "CONNECTED: API reachable";
-        }
-      }
+      const collections = await adminDb.listCollections();
+      firebaseStatus = `CONNECTED: Found ${collections.length} collections`;
     } catch (e) {
-      supabaseStatus = "ERROR: " + e.message;
+      firebaseStatus = "ERROR: " + e.message;
+      firebaseError = e.message;
     }
 
     res.json({
       status: 'ok',
-      supabase: supabaseStatus,
-      supabase_error: supabaseError,
+      firebase: firebaseStatus,
+      firebase_error: firebaseError,
       google_auth_test: authTest,
       google_auth_error: authError,
       fallback_status: fallbackStatus,
@@ -198,33 +190,23 @@ async function startServer() {
         requestBody: event,
       });
 
-      // Save to Supabase if configured
+      // Save to Firebase
       try {
-        if (process.env.VITE_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
-          const supabaseServer = getSupabaseServer();
-          const { error: sbError } = await supabaseServer
-            .from('bookings')
-            .insert([{
-              first_name: firstName,
-              last_name: lastName,
-              email,
-              phone,
-              address,
-              notes,
-              service_name: serviceName,
-              start_time: startTime,
-              end_time: endTime,
-              created_at: new Date().toISOString()
-            }]);
-          
-          if (sbError) {
-            console.error('Supabase Booking Insert Error (Non-blocking):', sbError);
-          } else {
-            console.log('Booking saved to Supabase successfully');
-          }
-        }
-      } catch (sbE) {
-        console.error('Supabase Booking Exception (Non-blocking):', sbE);
+        await adminDb.collection('bookings').add({
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          phone: phone || "",
+          address: address || "",
+          notes: notes || "",
+          service_name: serviceName,
+          start_time: startTime,
+          end_time: endTime,
+          created_at: new Date().toISOString() // Using ISO string for now to match rules isValidBooking check
+        });
+        console.log('Booking saved to Firebase successfully');
+      } catch (fbE) {
+        console.error('Firebase Booking Error (Non-blocking):', fbE);
       }
 
       res.json({ success: true });

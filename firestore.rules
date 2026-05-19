@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper: validate document IDs
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Helper: validate incoming data
+    function isValidBooking(data) {
+      return data.keys().hasAll(['first_name', 'last_name', 'email', 'service_name', 'start_time', 'end_time'])
+        && data.first_name is string && data.first_name.size() <= 100
+        && data.last_name is string && data.last_name.size() <= 100
+        && data.email is string && data.email.size() <= 150
+        && data.service_name is string && data.service_name.size() <= 200
+        && data.start_time is string
+        && data.end_time is string
+        && (data.get('notes', '') is string && data.get('notes', '').size() <= 2000)
+        && (data.get('phone', '') is string && data.get('phone', '').size() <= 20)
+        && (data.get('address', '') is string && data.get('address', '').size() <= 500)
+        && data.created_at == request.time;
+    }
+
+    match /bookings/{bookingId} {
+      allow create: if isValidId(bookingId) && isValidBooking(request.resource.data);
+      // For now, restrict reading unless the app grows to need it
+      allow read: if false;
+    }
+  }
+}
