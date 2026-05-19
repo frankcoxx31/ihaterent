@@ -1,4 +1,74 @@
+import express from 'express';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { createServer as createViteServer } from 'vite';
+import fs from 'fs';
+import { google } from 'googleapis';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+async function startServer() {
+  const app = express();
+  const PORT = process.env.PORT || 3000;
+
+  app.use(express.json());
+
+  // Helper to load and clean Google Calendar credentials
+  const getGoogleCredentials = async () => {
+    let privateKey = process.env.GOOGLE_PRIVATE_KEY;
+    let clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+    let calendarId = process.env.GOOGLE_CALENDAR_ID;
+    const fullJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
+
+    let fallbackStatus = "NOT_USED";
+    let fallbackError = null;
+    let source = "ENV";
+
+    // 1. Try to load from full JSON environment variable first (most reliable)
+    if (fullJson && fullJson !== 'undefined' && fullJson !== 'null') {
+      try {
+        const credentials = JSON.parse(fullJson);
+        privateKey = credentials.private_key;
+        clientEmail = credentials.client_email;
+        source = "JSON_ENV";
+        fallbackStatus = "LOADED_FROM_JSON_ENV";
+      } catch (e) {
+        fallbackError = `JSON_ENV_PARSE_ERROR: ${e.message}`;
+      }
+    }
+
+    // 2. Handle "undefined" or "null" strings from some environments
+    if (privateKey === 'undefined' || privateKey === 'null' || !privateKey) privateKey = null;
+    if (clientEmail === 'undefined' || clientEmail === 'null' || !clientEmail) clientEmail = null;
+    if (calendarId === 'undefined' || calendarId === 'null' || !calendarId) calendarId = null;
+
+    // 3. Fallback to baked-in credentials if still missing or looks like a personal email
+    // Service account emails MUST end in .gserviceaccount.com
+    const isServiceAccountEmail = clientEmail && clientEmail.includes('.gserviceaccount.com');
+    let credentialsObj = null;
+    
+    if (!privateKey || !isServiceAccountEmail || (privateKey && privateKey.length < 100)) {
+      fallbackStatus = "ATTEMPTING_FALLBACK_FILE";
+      try {
+        const secretPath = path.join(__dirname, 'calendar-secret.js');
+        if (fs.existsSync(secretPath)) {
+          const { ENCODED_CREDENTIALS } = await import('./calendar-secret.js');
+          const cleanEncoded = ENCODED_CREDENTIALS.trim();
+          const decoded = Buffer.from(cleanEncoded, 'base64').toString('utf8');
+          credentialsObj = JSON.parse(decoded);
+          
+          // Force fallback if the current ones are broken or not service account
+          privateKey = credentialsObj.private_key;
+          clientEmail = credentialsObj.client_email;
+          source = "FALLBACK_FILE";
+          fallbackStatus = "FALLBACK_FILE_SUCCESS";
+        } else {
+          fallbackStatus = "FALLBACK_FILE_MISSING";
+        }
+      } catch (e) {
+        fallbackStatus = "FALLBACK_FILE_FAILED";
+        fallbackError = e.message;
       }
     }
 
@@ -32,7 +102,7 @@
 
   // API route for health check and environment variable verification
   app.get('/api/health', async (req, res) => {
-    const { privateKey, clientEmail, calendarId, fallbackStatus, fallbackError, source, credentialsObj } = getGoogleCredentials();
+    const { privateKey, clientEmail, calendarId, fallbackStatus, fallbackError, source, credentialsObj } = await getGoogleCredentials();
     const geminiKey = process.env.GEMINI_API_KEY;
 
     let authTest = "NOT_STARTED";
@@ -96,7 +166,7 @@
   app.post('/api/book', async (req, res) => {
     try {
       const { firstName, lastName, email, phone, address, notes, serviceName, startTime, endTime } = req.body;
-      const { credentialsObj, calendarId } = getGoogleCredentials();
+      const { credentialsObj, calendarId } = await getGoogleCredentials();
 
       if (!credentialsObj || !calendarId) {
         return res.status(500).json({ error: 'Calendar credentials not configured' });
@@ -139,7 +209,7 @@
       const { date } = req.body; // e.g., "2023-10-25"
       console.log('Checking availability for date:', date);
       
-      const { credentialsObj, calendarId } = getGoogleCredentials();
+      const { credentialsObj, calendarId } = await getGoogleCredentials();
 
       if (!credentialsObj || !calendarId) {
         return res.status(500).json({ error: 'Calendar credentials not configured' });
@@ -194,51 +264,6 @@
       res.sendFile(zipPath);
     } else {
       res.status(404).send('Build zip not found. Please wait for it to be generated.');
-    }
-  });
-
-// --- APPOINTMENT REQUEST ---
-  app.post('/api/appointment', async (req, res) => {
-    const { full_name, email, phone, service_type, appointment_date, appointment_time, location, notes } = req.body;
-    try {
-      const { error } = await db.from('appointments').insert([
-        { full_name, email, phone, service_type, appointment_date, appointment_time, location, notes }
-      ]);
-      if (error) throw error;
-      res.json({ success: true, message: 'Appointment booked!' });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ success: false, message: 'Server error' });
-    }
-  });
-
-  // --- CLIENT INTAKE ---
-  app.post('/api/intake', async (req, res) => {
-    const { full_name, email, phone, id_type, id_number, document_type } = req.body;
-    try {
-      const { error } = await db.from('client_intake').insert([
-        { full_name, email, phone, id_type, id_number, document_type }
-      ]);
-      if (error) throw error;
-      res.json({ success: true, message: 'Intake form submitted!' });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ success: false, message: 'Server error' });
-    }
-  });
-
-  // --- CONTACT / QUOTE REQUEST ---
-  app.post('/api/contact', async (req, res) => {
-    const { full_name, email, phone, message, service_interest } = req.body;
-    try {
-      const { error } = await db.from('contact_requests').insert([
-        { full_name, email, phone, message, service_interest }
-      ]);
-      if (error) throw error;
-      res.json({ success: true, message: 'Message received!' });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ success: false, message: 'Server error' });
     }
   });
 

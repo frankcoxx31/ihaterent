@@ -5,3 +5,14 @@ coverage/
 *.log
 .env*
 !.env.example
+calendar-secret.js
+website-build.zip
+*.zip
+*.cjs
+replace.js
+zip-build.js
+list-zip.js
+test-auth.js
+*.tmp
+tmp/
+.tmp/
