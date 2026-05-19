@@ -54,12 +54,36 @@ async function startServer() {
 
     // 4. Clean the private key
     if (privateKey && typeof privateKey === 'string') {
-      privateKey = privateKey.replace(/['"]/g, '').trim();
-      if (!privateKey.includes('BEGIN PRIVATE KEY')) {
-        privateKey = privateKey.replace(/\\n/g, '').replace(/\s/g, '');
-        privateKey = `-----BEGIN PRIVATE KEY-----\n${privateKey}\n-----END PRIVATE KEY-----\n`;
-      } else {
+      // Remove any surrounding quotes and whitespace
+      privateKey = privateKey.trim();
+      
+      // Remove surrounding quotes again in case of double quoting like '"..."'
+      if ((privateKey.startsWith('"') && privateKey.endsWith('"')) || 
+          (privateKey.startsWith("'") && privateKey.endsWith("'"))) {
+        privateKey = privateKey.substring(1, privateKey.length - 1).trim();
+      }
+
+      // If it contains escaped newlines, replace them with actual newlines
+      if (privateKey.includes('\\n')) {
         privateKey = privateKey.replace(/\\n/g, '\n');
+      }
+
+      // Ensure standard header/footer are present and correctly formatted
+      if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
+        // Strip everything that isn't base64-like and wrap it
+        const base64Part = privateKey.replace(/-----BEGIN PRIVATE KEY-----/g, '')
+                                     .replace(/-----END PRIVATE KEY-----/g, '')
+                                     .replace(/\s/g, '');
+        privateKey = `-----BEGIN PRIVATE KEY-----\n${base64Part}\n-----END PRIVATE KEY-----\n`;
+      } else {
+        // Standardize existing headers - sometimes they come with extra spaces or missing newlines
+        // First, normalize all whitespace to space
+        let parts = privateKey.split('-----');
+        if (parts.length >= 5) {
+          // parts[0] is prefix, parts[1] is "BEGIN ...", parts[2] is key, parts[3] is "END ...", parts[4] is suffix
+          const keyPart = parts[2].replace(/\s/g, '');
+          privateKey = `-----BEGIN PRIVATE KEY-----\n${keyPart}\n-----END PRIVATE KEY-----\n`;
+        }
       }
     }
 
@@ -80,6 +104,21 @@ async function startServer() {
     return { privateKey, clientEmail, calendarId, fallbackStatus, fallbackError, source, credentialsObj };
   };
 
+  // Robust auth client creator
+  const getGoogleAuth = (credentialsObj: any) => {
+    if (!credentialsObj || !credentialsObj.private_key || !credentialsObj.client_email) {
+      return null;
+    }
+    
+    // Explicitly use fromJSON which handles the credential object format
+    const auth = google.auth.fromJSON(credentialsObj) as any;
+    if (auth) {
+      auth.scopes = ['https://www.googleapis.com/auth/calendar'];
+    }
+    
+    return auth;
+  };
+
   // API route for health check and environment variable verification
   app.get('/api/health', async (req, res) => {
     const { privateKey, clientEmail, calendarId, fallbackStatus, fallbackError, source, credentialsObj } = await getGoogleCredentials();
@@ -95,20 +134,21 @@ async function startServer() {
 
     try {
       if (credentialsObj && calendarId) {
-        // Use fromJSON for maximum compatibility
-        const auth = google.auth.fromJSON(credentialsObj) as any;
-        auth.scopes = ['https://www.googleapis.com/auth/calendar'];
+        const auth = getGoogleAuth(credentialsObj);
+        if (!auth) throw new Error("Could not initialize auth client");
         
         const token = await auth.authorize();
         authTest = `SUCCESS: Token acquired! (Expires: ${new Date(token.expiry_date || 0).toLocaleTimeString()})`;
         
         const calendar = google.calendar({ version: 'v3', auth });
+        const calendarInfo = await calendar.calendars.get({ calendarId });
         const events = await calendar.events.list({ 
           calendarId, 
           maxResults: 1,
           timeMin: new Date().toISOString()
         });
-        authTest += ` | Calendar is accessible. Found ${events.data.items?.length || 0} upcoming events.`;
+        authTest = `SUCCESS: Connected to "${calendarInfo.data.summary}"! (Expires: ${new Date(token.expiry_date || 0).toLocaleTimeString()})`;
+        authTest += ` | Found ${events.data.items?.length || 0} upcoming events.`;
       } else {
         const missing = [];
         if (!clientEmail) missing.push('clientEmail');
@@ -169,8 +209,8 @@ async function startServer() {
         return res.status(500).json({ error: 'Calendar credentials not configured' });
       }
 
-      const auth = google.auth.fromJSON(credentialsObj) as any;
-      auth.scopes = ['https://www.googleapis.com/auth/calendar'];
+      const auth = getGoogleAuth(credentialsObj);
+      if (!auth) return res.status(500).json({ error: 'Failed to initialize calendar auth' });
 
       const calendar = google.calendar({ version: 'v3', auth });
 
@@ -235,24 +275,32 @@ async function startServer() {
         return res.status(500).json({ error: 'Calendar credentials not configured' });
       }
 
-      const auth = google.auth.fromJSON(credentialsObj) as any;
-      auth.scopes = ['https://www.googleapis.com/auth/calendar'];
+      const auth = getGoogleAuth(credentialsObj);
+      if (!auth) return res.status(500).json({ error: 'Failed to initialize calendar auth' });
 
       const calendar = google.calendar({ version: 'v3', auth });
 
-      // Set time range for the requested date (from midnight to midnight next day)
-      const timeMin = new Date(date);
-      timeMin.setHours(0, 0, 0, 0);
+      // Set time range for the requested date in America/New_York
+      // The frontend sends selectedDate.toISOString() which is browser-local midnight in UTC.
+      // We want to ensure we query the full 24h window for that calendar date.
+      const baseDate = new Date(date);
       
-      const timeMax = new Date(date);
-      timeMax.setHours(23, 59, 59, 999);
+      // Calculate midnight NY in UTC (roughly 4-5 hours offset)
+      // A safe way is to just take the date part and create a UTC range that covers any possible NY window.
+      // More precisely, we can just use the date sent as a baseline.
+      const timeMin = new Date(baseDate.getTime());
+      timeMin.setUTCHours(0, 0, 0, 0);
+      // Extend the search range slightly to ensure we catch any overlapping events (e.g. 12h before and 12h after)
+      // to be absolutely sure we don't miss UTC shifts.
+      const queryMin = new Date(timeMin.getTime() - 12 * 60 * 60 * 1000); 
+      const queryMax = new Date(timeMin.getTime() + 36 * 60 * 60 * 1000);
 
-      console.log('Querying freebusy for:', { timeMin: timeMin.toISOString(), timeMax: timeMax.toISOString() });
+      console.log('Querying FreeBusy range:', { min: queryMin.toISOString(), max: queryMax.toISOString() });
 
       const response = await calendar.freebusy.query({
         requestBody: {
-          timeMin: timeMin.toISOString(),
-          timeMax: timeMax.toISOString(),
+          timeMin: queryMin.toISOString(),
+          timeMax: queryMax.toISOString(),
           timeZone: 'America/New_York',
           items: [{ id: calendarId }]
         }

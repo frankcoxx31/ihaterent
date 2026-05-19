@@ -186,8 +186,23 @@ export default function Booking() {
       const startTime = new Date(selectedDate);
       startTime.setHours(hours, minutes, 0, 0);
 
+      // Create start time in a format that we'll treat as notary-local time (America/New_York)
+      // We format it manually as "YYYY-MM-DDTHH:mm:ss" without TZ info
+      const year = selectedDate.getFullYear();
+      const month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
+      const day = selectedDate.getDate().toString().padStart(2, '0');
+      const hh = hours.toString().padStart(2, '0');
+      const mm = minutes.toString().padStart(2, '0');
+      const startTimeStr = `${year}-${month}-${day}T${hh}:${mm}:00`;
+
       // Create end Date object based on service duration
       const endTime = new Date(startTime.getTime() + (service?.duration || 30) * 60000);
+      const endYear = endTime.getFullYear();
+      const endMonth = (endTime.getMonth() + 1).toString().padStart(2, '0');
+      const endDay = endTime.getDate().toString().padStart(2, '0');
+      const endHH = endTime.getHours().toString().padStart(2, '0');
+      const endMM = endTime.getMinutes().toString().padStart(2, '0');
+      const endTimeStr = `${endYear}-${endMonth}-${endDay}T${endHH}:${endMM}:00`;
 
       const response = await fetch('/api/book', {
         method: 'POST',
@@ -197,8 +212,8 @@ export default function Booking() {
         body: JSON.stringify({
           ...formData,
           serviceName: service?.name,
-          startTime: startTime.toISOString(),
-          endTime: endTime.toISOString(),
+          startTime: startTimeStr,
+          endTime: endTimeStr,
         }),
       });
 
