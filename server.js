@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const properties = require('./data/properties.json');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -8,6 +8,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/api/properties', (req, res) => {
+  const properties = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'properties.json'), 'utf8'));
   res.json(properties);
 });
 
