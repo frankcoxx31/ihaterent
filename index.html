@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HAVEN — Luxury Real Estate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0B1829;--navy-mid:#152238;--navy-light:#1e3252;
+  --tan:#C9A96E;--tan-light:#E8D5B0;--tan-dark:#A88040;
+  --off-white:#F8F5F0;--white:#FFFFFF;--gray-light:#EDEAE5;--gray-mid:#9B9590;
+  --text-dark:#1C1C1C;
+  --font-primary:'Poppins',sans-serif;--font-serif:'Cormorant Garamond',serif;
+  --ease:cubic-bezier(0.25,0.46,0.45,0.94);
+}
+html{scroll-behavior:smooth;cursor:none}
+body{font-family:var(--font-primary);color:var(--text-dark);background:var(--off-white);overflow-x:hidden}
+body.loading{overflow:hidden}
+
+/* CURSOR */
+#cursor-dot{position:fixed;top:0;left:0;width:8px;height:8px;background:var(--navy);border-radius:50%;pointer-events:none;z-index:10000;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .3s}
+#cursor-ring{position:fixed;top:0;left:0;width:44px;height:44px;border:1.5px solid var(--tan);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .35s var(--ease),height .35s var(--ease),opacity .3s;opacity:.75}
+#cursor-ring.grow{width:70px;height:70px;opacity:1}
+body.dark-bg #cursor-dot{background:var(--white)}
+
+/* SCROLL PROGRESS */
+#scroll-progress{position:fixed;top:0;left:0;height:2px;background:var(--tan);z-index:9998;width:0%;transition:width .05s linear}
+
+/* LOADER */
+#loader{position:fixed;inset:0;background:var(--navy);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px}
+.loader-word{font-family:var(--font-primary);font-weight:800;font-size:clamp(56px,10vw,120px);color:var(--white);letter-spacing:.35em;display:flex}
+.loader-word span{display:inline-block;opacity:0;transform:translateY(60px);animation:liftUp .7s var(--ease) forwards}
+.loader-word span:nth-child(1){animation-delay:.05s}
+.loader-word span:nth-child(2){animation-delay:.15s}
+.loader-word span:nth-child(3){animation-delay:.25s}
+.loader-word span:nth-child(4){animation-delay:.35s}
+.loader-word span:nth-child(5){animation-delay:.45s}
+@keyframes liftUp{to{opacity:1;transform:translateY(0)}}
+.loader-bar{width:0;height:1px;background:var(--tan);animation:barGrow 1s var(--ease) .6s forwards}
+@keyframes barGrow{to{width:180px}}
+.loader-sub{font-family:var(--font-serif);font-style:italic;font-size:13px;color:var(--tan);letter-spacing:.4em;text-transform:uppercase;opacity:0;animation:fadeUp .5s ease 1s forwards}
+@keyframes fadeUp{to{opacity:1}}
+#loader.out{animation:loaderOut .7s var(--ease) forwards}
+@keyframes loaderOut{to{opacity:0;pointer-events:none;visibility:hidden}}
+
+/* NAVBAR */
+#navbar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:30px 64px;display:flex;align-items:center;justify-content:space-between;transition:padding .5s var(--ease),background .5s var(--ease),box-shadow .5s}
+#navbar.scrolled{background:var(--navy);padding:18px 64px;box-shadow:0 4px 40px rgba(11,24,41,.25)}
+.nav-logo{font-family:var(--font-primary);font-weight:800;font-size:20px;color:var(--white);letter-spacing:.28em;text-decoration:none;cursor:none}
+.nav-links{display:flex;gap:44px;list-style:none}
+.nav-links a{font-size:12px;font-weight:400;color:rgba(255,255,255,.8);text-decoration:none;letter-spacing:.14em;text-transform:uppercase;cursor:none;position:relative;transition:color .3s}
+.nav-links a::after{content:'';position:absolute;bottom:-5px;left:0;width:0;height:1px;background:var(--tan);transition:width .35s var(--ease)}
+.nav-links a:hover{color:#fff}
+.nav-links a:hover::after{width:100%}
+.nav-cta{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--navy);background:var(--tan);padding:13px 30px;text-decoration:none;cursor:none;position:relative;overflow:hidden;transition:color .3s}
+.nav-cta::before{content:'';position:absolute;inset:0;background:var(--tan-dark);transform:translateX(-101%);transition:transform .4s var(--ease)}
+.nav-cta:hover::before{transform:translateX(0)}
+.nav-cta span{position:relative;z-index:1}
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:none;z-index:1001;background:none;border:none;padding:4px}
+.nav-hamburger i{display:block;width:24px;height:1.5px;background:#fff;transition:all .35s var(--ease)}
+.nav-hamburger.active i:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.nav-hamburger.active i:nth-child(2){opacity:0;transform:scaleX(0)}
+.nav-hamburger.active i:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+/* MOBILE NAV */
+#mobile-nav{position:fixed;inset:0;background:var(--navy);z-index:999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;opacity:0;pointer-events:none;transition:opacity .5s var(--ease)}
+#mobile-nav.open{opacity:1;pointer-events:all}
+.mob-links{list-style:none;text-align:center}
+.mob-links li{overflow:hidden;margin:6px 0}
+.mob-links a{font-weight:700;font-size:clamp(40px,8vw,70px);color:#fff;text-decoration:none;letter-spacing:.04em;display:inline-block;transform:translateY(105%);transition:transform .55s var(--ease),color .3s;cursor:none}
+#mobile-nav.open .mob-links li:nth-child(1) a{transform:translateY(0);transition-delay:.08s}
+#mobile-nav.open .mob-links li:nth-child(2) a{transform:translateY(0);transition-delay:.14s}
+#mobile-nav.open .mob-links li:nth-child(3) a{transform:translateY(0);transition-delay:.20s}
+#mobile-nav.open .mob-links li:nth-child(4) a{transform:translateY(0);transition-delay:.26s}
+.mob-links a:hover{color:var(--tan)}
+.mob-cta-wrap{margin-top:40px;opacity:0;transition:opacity .4s .35s}
+#mobile-nav.open .mob-cta-wrap{opacity:1}
+
+/* HERO */
+#hero{height:100vh;min-height:680px;position:relative;display:flex;align-items:flex-end;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1920&q=90') center/cover;transform:scale(1.06);animation:heroKen 9s var(--ease) forwards}
+@keyframes heroKen{to{transform:scale(1)}}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(11,24,41,.15) 0%,rgba(11,24,41,.05) 35%,rgba(11,24,41,.72) 100%)}
+.hero-content{position:relative;z-index:2;padding:0 64px 110px;max-width:960px}
+.hero-eyebrow{font-family:var(--font-serif);font-style:italic;font-weight:300;font-size:18px;color:var(--tan);letter-spacing:.15em;margin-bottom:22px;opacity:0;animation:fadeUp .7s ease 2s forwards}
+.hero-title{font-weight:800;font-size:clamp(52px,7.5vw,104px);color:#fff;line-height:1.04;letter-spacing:-.025em;margin-bottom:28px}
+.word-wrap{overflow:hidden;display:inline-block;margin-right:.22em}
+.word-wrap:last-child{margin-right:0}
+.word{display:inline-block;transform:translateY(110%);transition:transform .9s var(--ease)}
+.word.in{transform:translateY(0)}
+.word.gold{color:var(--tan)}
+.hero-sub{font-weight:300;font-size:16px;color:rgba(255,255,255,.7);line-height:1.8;max-width:480px;margin-bottom:44px;opacity:0;animation:fadeUp .7s ease 2.5s forwards}
+.hero-btns{display:flex;gap:22px;align-items:center;opacity:0;animation:fadeUp .7s ease 2.7s forwards}
+.btn-fill{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--navy);background:var(--tan);padding:18px 42px;text-decoration:none;cursor:none;position:relative;overflow:hidden;transition:color .3s}
+.btn-fill::before{content:'';position:absolute;inset:0;background:#fff;transform:translateX(-101%);transition:transform .4s var(--ease)}
+.btn-fill:hover::before{transform:translateX(0)}
+.btn-fill span{position:relative;z-index:1}
+.btn-ghost{font-size:12px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:#fff;text-decoration:none;cursor:none;display:flex;align-items:center;gap:10px;transition:gap .3s}
+.btn-ghost:hover{gap:18px}
+.btn-ghost::after{content:'→';font-size:14px}
+.hero-scroll-ind{position:absolute;right:64px;bottom:110px;z-index:2;display:flex;flex-direction:column;align-items:center;gap:14px;opacity:0;animation:fadeUp .7s ease 3.1s forwards}
+.hero-scroll-ind p{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.5);writing-mode:vertical-rl}
+.scroll-line{width:1px;height:56px;background:linear-gradient(to bottom,transparent,var(--tan));animation:pulse-line 2.2s ease infinite}
+@keyframes pulse-line{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* STATS */
+#stats{background:var(--navy);padding:100px 64px}
+.stats-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.stat-cell{text-align:center;padding:40px 20px;border:1px solid rgba(255,255,255,.05);transition:border-color .4s}
+.stat-cell:hover{border-color:rgba(201,169,110,.25)}
+.stat-val{font-weight:800;font-size:clamp(44px,5vw,74px);color:#fff;letter-spacing:-.025em;line-height:1;margin-bottom:14px}
+.stat-val .sfx{color:var(--tan)}
+.stat-bar{width:32px;height:1px;background:var(--tan);margin:0 auto 14px}
+.stat-lbl{font-size:11px;font-weight:400;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.4)}
+
+/* SECTION HEADERS */
+.eyebrow{font-family:var(--font-serif);font-style:italic;font-weight:300;font-size:17px;color:var(--tan);letter-spacing:.1em;margin-bottom:10px}
+.sec-title{font-weight:700;font-size:clamp(34px,4vw,58px);color:var(--navy);line-height:1.1;letter-spacing:-.025em}
+.sec-title.light{color:#fff}
+
+/* FEATURED PROPERTIES */
+#properties{padding:130px 64px;max-width:1440px;margin:0 auto}
+.props-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:70px}
+.link-arrow{font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--navy);text-decoration:none;cursor:none;display:flex;align-items:center;gap:10px;transition:gap .3s}
+.link-arrow::after{content:'→'}
+.link-arrow:hover{gap:16px}
+.props-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+
+/* CARD */
+.prop-card{background:#fff;position:relative;overflow:hidden;cursor:none;transition:transform .45s var(--ease),box-shadow .45s var(--ease)}
+.prop-card:hover{transform:translateY(-10px);box-shadow:0 50px 80px rgba(11,24,41,.11)}
+.card-img-box{position:relative;height:290px;overflow:hidden}
+.card-img-box img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .75s var(--ease)}
+.prop-card:hover .card-img-box img{transform:scale(1.1)}
+.card-spotlight{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(201,169,110,.3) 0%,transparent 55%);opacity:0;transition:opacity .3s}
+.prop-card:hover .card-spotlight{opacity:1}
+.card-tag{position:absolute;top:18px;left:18px;font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;padding:6px 14px;z-index:2}
+.tag-new{background:var(--tan);color:var(--navy)}
+.tag-exclusive{background:var(--navy);color:#fff}
+.tag-sold{background:rgba(0,0,0,.55);color:#fff}
+.card-body{padding:26px 28px 30px}
+.card-price{font-weight:800;font-size:22px;color:var(--navy);letter-spacing:-.01em;margin-bottom:4px}
+.card-name{font-family:var(--font-serif);font-weight:400;font-size:21px;color:var(--text-dark);margin-bottom:4px}
+.card-loc{font-size:11px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:var(--gray-mid);margin-bottom:20px;display:flex;align-items:center;gap:7px}
+.card-loc::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--tan);flex-shrink:0}
+.card-sep{height:1px;background:var(--gray-light);margin-bottom:20px}
+.card-specs{display:flex;gap:22px}
+.spec{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--gray-mid)}
+.spec strong{color:var(--text-dark)}
+.spec-ico{font-size:13px;color:var(--tan)}
+
+/* SHOWCASE HORIZONTAL */
+#showcase{background:var(--navy);padding:120px 0;overflow:hidden}
+.show-head{padding:0 64px;display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:56px}
+.show-hint{display:flex;align-items:center;gap:14px}
+.hint-track{width:56px;height:1px;background:rgba(255,255,255,.15);position:relative;overflow:hidden}
+.hint-track::after{content:'';position:absolute;inset-block:0;left:-40%;width:40%;background:var(--tan);animation:trackMove 2s ease infinite}
+@keyframes trackMove{to{left:140%}}
+.hint-txt{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.35)}
+.show-scroll{display:flex;overflow-x:scroll;scroll-snap-type:x mandatory;gap:20px;padding:0 64px 44px;scrollbar-width:none;cursor:grab}
+.show-scroll::-webkit-scrollbar{display:none}
+.show-scroll:active{cursor:grabbing}
+.show-card{flex:0 0 400px;scroll-snap-align:start;height:560px;position:relative;overflow:hidden}
+.show-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .75s var(--ease)}
+.show-card:hover img{transform:scale(1.07)}
+.show-card-over{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,24,41,.92) 0%,transparent 55%)}
+.show-card-body{position:absolute;bottom:0;left:0;right:0;padding:30px}
+.show-card-type{font-size:9px;font-weight:600;letter-spacing:.32em;text-transform:uppercase;color:var(--tan);margin-bottom:7px}
+.show-card-name{font-family:var(--font-serif);font-weight:400;font-size:26px;color:#fff;line-height:1.2;margin-bottom:6px}
+.show-card-price{font-weight:700;font-size:17px;color:var(--tan)}
+
+/* ABOUT */
+#about{padding:140px 64px;max-width:1440px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:110px;align-items:center}
+.about-imgs{position:relative;height:620px}
+.about-img-a{position:absolute;width:74%;height:84%;object-fit:cover;top:0;left:0;display:block}
+.about-img-b{position:absolute;width:52%;height:54%;object-fit:cover;bottom:0;right:0;border:8px solid var(--off-white);display:block}
+.about-badge{position:absolute;bottom:70px;left:-22px;background:var(--tan);padding:22px 30px;z-index:3}
+.badge-num{font-weight:800;font-size:38px;color:var(--navy);line-height:1}
+.badge-txt{font-size:12px;font-weight:400;color:var(--navy);letter-spacing:.08em;margin-top:2px}
+.about-copy .eyebrow{margin-bottom:8px}
+.about-copy .sec-title{margin-bottom:28px}
+.about-p{font-weight:300;font-size:15px;color:var(--gray-mid);line-height:1.9;margin-bottom:18px}
+.about-sig{font-family:var(--font-serif);font-style:italic;font-weight:300;font-size:30px;color:var(--navy);margin-top:44px}
+.about-sig-role{font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--tan);margin-top:6px}
+
+/* SERVICES */
+#services{background:var(--navy);padding:120px 64px}
+.svc-inner{max-width:1200px;margin:0 auto}
+.svc-head{text-align:center;margin-bottom:80px}
+.svc-head .eyebrow{display:block}
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:rgba(255,255,255,.04)}
+.svc-item{background:var(--navy);padding:52px 44px;transition:background .4s;cursor:none}
+.svc-item:hover{background:var(--navy-light)}
+.svc-num{font-weight:900;font-size:64px;color:rgba(255,255,255,.04);line-height:1;margin-bottom:16px;transition:color .4s}
+.svc-item:hover .svc-num{color:rgba(201,169,110,.1)}
+.svc-title{font-weight:600;font-size:18px;color:#fff;margin-bottom:16px}
+.svc-desc{font-weight:300;font-size:14px;color:rgba(255,255,255,.4);line-height:1.85}
+.svc-lnk{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--tan);text-decoration:none;cursor:none;margin-top:26px;transition:gap .3s}
+.svc-lnk::after{content:'→'}
+.svc-lnk:hover{gap:14px}
+
+/* CONTACT */
+#contact{padding:140px 64px;max-width:1440px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:100px}
+.contact-left .sec-title{margin-bottom:20px}
+.contact-body{font-weight:300;font-size:15px;color:var(--gray-mid);line-height:1.85;margin-bottom:52px}
+.c-details{display:flex;flex-direction:column;gap:28px}
+.c-detail{display:flex;gap:18px;align-items:flex-start}
+.c-icon{width:44px;height:44px;border:1px solid var(--tan);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--tan);flex-shrink:0}
+.c-lbl{font-size:10px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--tan);margin-bottom:3px}
+.c-val{font-size:14px;font-weight:400;color:var(--text-dark)}
+.contact-form{display:flex;flex-direction:column;gap:28px}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.f-group{position:relative}
+.f-group input,.f-group textarea,.f-group select{width:100%;background:transparent;border:none;border-bottom:1px solid #D8D4CE;padding:16px 0;font-family:var(--font-primary);font-weight:300;font-size:14px;color:var(--text-dark);outline:none;transition:border-color .3s;cursor:none;-webkit-appearance:none}
+.f-group input::placeholder,.f-group textarea::placeholder{color:transparent}
+.f-group textarea{resize:none;height:90px}
+.f-group label{position:absolute;top:16px;left:0;font-size:13px;font-weight:300;color:var(--gray-mid);transition:all .3s;pointer-events:none}
+.f-group input:focus,.f-group textarea:focus{border-color:var(--tan)}
+.f-group input:focus~label,.f-group input:not(:placeholder-shown)~label,
+.f-group textarea:focus~label,.f-group textarea:not(:placeholder-shown)~label{top:-10px;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--tan)}
+.btn-submit{font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#fff;background:var(--navy);border:none;padding:20px 52px;cursor:none;position:relative;overflow:hidden;transition:color .3s;align-self:flex-start;margin-top:6px}
+.btn-submit::before{content:'';position:absolute;inset:0;background:var(--tan);transform:translateX(-101%);transition:transform .4s var(--ease)}
+.btn-submit:hover::before{transform:translateX(0)}
+.btn-submit:hover{color:var(--navy)}
+.btn-submit span{position:relative;z-index:1}
+
+/* FOOTER */
+#footer{background:var(--navy);padding:90px 64px 44px;position:relative;overflow:hidden}
+.footer-wm{position:absolute;bottom:-50px;right:-30px;font-weight:900;font-size:clamp(130px,20vw,300px);color:rgba(255,255,255,.022);letter-spacing:.08em;line-height:1;user-select:none;pointer-events:none;white-space:nowrap}
+.footer-in{max-width:1200px;margin:0 auto;position:relative;z-index:1}
+.footer-top{display:grid;grid-template-columns:2.2fr 1fr 1fr 1fr;gap:60px;margin-bottom:80px}
+.f-logo{font-weight:800;font-size:24px;color:#fff;letter-spacing:.28em;display:block;margin-bottom:18px;text-decoration:none;cursor:none}
+.f-brand-desc{font-weight:300;font-size:13px;color:rgba(255,255,255,.35);line-height:1.85;max-width:260px;margin-bottom:28px}
+.f-socials{display:flex;gap:12px}
+.f-social{width:40px;height:40px;border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);text-decoration:none;font-size:13px;cursor:none;transition:all .3s}
+.f-social:hover{border-color:var(--tan);color:var(--tan)}
+.f-col-ttl{font-size:11px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:#fff;margin-bottom:26px}
+.f-links{list-style:none;display:flex;flex-direction:column;gap:13px}
+.f-links a{font-weight:300;font-size:13px;color:rgba(255,255,255,.38);text-decoration:none;cursor:none;transition:color .3s}
+.f-links a:hover{color:var(--tan)}
+.footer-bot{border-top:1px solid rgba(255,255,255,.06);padding-top:30px;display:flex;justify-content:space-between;align-items:center}
+.f-copy{font-size:12px;font-weight:300;color:rgba(255,255,255,.22);letter-spacing:.04em}
+.f-legal{display:flex;gap:28px}
+.f-legal a{font-size:12px;font-weight:300;color:rgba(255,255,255,.22);text-decoration:none;cursor:none;transition:color .3s}
+.f-legal a:hover{color:var(--tan)}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(44px);transition:opacity .85s var(--ease),transform .85s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}.d5{transition-delay:.40s}.d6{transition-delay:.48s}
+
+/* RESPONSIVE */
+@media(max-width:1100px){
+  .props-grid{grid-template-columns:repeat(2,1fr)}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  #about{grid-template-columns:1fr;gap:60px}
+  .about-imgs{height:500px}
+  #contact{grid-template-columns:1fr;gap:60px}
+  .footer-top{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  #navbar{padding:22px 28px}
+  #navbar.scrolled{padding:16px 28px}
+  .nav-links,.nav-cta{display:none}
+  .nav-hamburger{display:flex}
+  .hero-content{padding:0 28px 80px}
+  .hero-scroll-ind{display:none}
+  #stats{padding:60px 28px}
+  #properties{padding:80px 28px}
+  .props-head{flex-direction:column;align-items:flex-start;gap:20px}
+  .props-grid{grid-template-columns:1fr}
+  .show-head{padding:0 28px;flex-direction:column;align-items:flex-start;gap:20px}
+  .show-scroll{padding:0 28px 44px}
+  .show-card{flex:0 0 310px;height:480px}
+  #about,#contact{padding:80px 28px}
+  #services{padding:80px 28px}
+  .svc-grid{grid-template-columns:1fr}
+  .f-row{grid-template-columns:1fr}
+  #footer{padding:70px 28px 36px}
+  .footer-top{grid-template-columns:1fr;gap:40px}
+  .footer-bot{flex-direction:column;gap:16px;text-align:center}
+  .f-legal{justify-content:center}
+}
+</style>
+</head>
+<body class="loading">
+
+<!-- CURSOR -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<div id="scroll-progress"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-word">
+    <span>H</span><span>A</span><span>V</span><span>E</span><span>N</span>
+  </div>
+  <div class="loader-bar"></div>
+  <p class="loader-sub">Luxury Real Estate</p>
+</div>
+
+<!-- MOBILE NAV -->
+<div id="mobile-nav">
+  <ul class="mob-links">
+    <li><a href="#properties">Properties</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="mob-cta-wrap">
+    <a href="#contact" class="nav-cta"><span>Book a Viewing</span></a>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">HAVEN</a>
+  <ul class="nav-links">
+    <li><a href="#properties">Properties</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta"><span>Book a Viewing</span></a>
+  <button class="nav-hamburger" id="hamburger" aria-label="Menu">
+    <i></i><i></i><i></i>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Curated since 2008</p>
+    <h1 class="hero-title">
+      <span class="word-wrap"><span class="word">Where</span></span>
+      <span class="word-wrap"><span class="word">Luxury</span></span>
+      <br>
+      <span class="word-wrap"><span class="word gold">Finds</span></span>
+      <span class="word-wrap"><span class="word">Home</span></span>
+    </h1>
+    <p class="hero-sub">We represent the world's most distinguished residences — each one selected for its architecture, provenance, and the life it promises.</p>
+    <div class="hero-btns">
+      <a href="#properties" class="btn-fill"><span>Explore Properties</span></a>
+      <a href="#about" class="btn-ghost">Our Story</a>
+    </div>
+  </div>
+  <div class="hero-scroll-ind">
+    <div class="scroll-line"></div>
+    <p>Scroll</p>
+  </div>
+</section>
+
+<!-- STATS -->
+<section id="stats">
+  <div class="stats-grid">
+    <div class="stat-cell reveal">
+      <div class="stat-val"><span class="cnt" data-target="850">0</span><span class="sfx">+</span></div>
+      <div class="stat-bar"></div>
+      <p class="stat-lbl">Properties Sold</p>
+    </div>
+    <div class="stat-cell reveal d1">
+      <div class="stat-val">$<span class="cnt" data-target="2.4" data-dec="1">0</span><span class="sfx">B</span></div>
+      <div class="stat-bar"></div>
+      <p class="stat-lbl">Total Portfolio</p>
+    </div>
+    <div class="stat-cell reveal d2">
+      <div class="stat-val"><span class="cnt" data-target="15">0</span><span class="sfx">+</span></div>
+      <div class="stat-bar"></div>
+      <p class="stat-lbl">Years of Excellence</p>
+    </div>
+    <div class="stat-cell reveal d3">
+      <div class="stat-val"><span class="cnt" data-target="98">0</span><span class="sfx">%</span></div>
+      <div class="stat-bar"></div>
+      <p class="stat-lbl">Client Satisfaction</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED PROPERTIES -->
+<section id="properties">
+  <div class="props-head">
+    <div>
+      <p class="eyebrow reveal">Featured Listings</p>
+      <h2 class="sec-title reveal d1">Exceptional Residences</h2>
+    </div>
+    <a href="#" class="link-arrow reveal">View All Properties</a>
+  </div>
+  <div class="props-grid" id="props-grid"></div>
+</section>
+
+<!-- SHOWCASE HORIZONTAL -->
+<section id="showcase">
+  <div class="show-head">
+    <div>
+      <p class="eyebrow reveal" style="color:var(--tan)">Exclusive Collection</p>
+      <h2 class="sec-title light reveal d1">Rare Opportunities</h2>
+    </div>
+    <div class="show-hint reveal d2">
+      <div class="hint-track"></div>
+      <span class="hint-txt">Drag to Explore</span>
+    </div>
+  </div>
+  <div class="show-scroll" id="show-scroll"></div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-imgs reveal">
+    <img class="about-img-a" src="https://images.unsplash.com/photo-1502005097973-6a7082348e28?auto=format&fit=crop&w=900&q=85" alt="Estate">
+    <img class="about-img-b" src="https://images.unsplash.com/photo-1600573472592-401b489a3cdc?auto=format&fit=crop&w=700&q=85" alt="Interior">
+    <div class="about-badge">
+      <div class="badge-num">15+</div>
+      <div class="badge-txt">Years of Trust</div>
+    </div>
+  </div>
+  <div class="about-copy">
+    <p class="eyebrow reveal">Our Story</p>
+    <h2 class="sec-title reveal d1">A Different Kind of<br>Real Estate House</h2>
+    <p class="about-p reveal d2">HAVEN was founded on a single belief: that the search for an extraordinary home should be as refined as the home itself. We don't list properties — we curate sanctuaries.</p>
+    <p class="about-p reveal d3">Our team of specialists operates across the globe's most coveted markets, bringing together decades of expertise, an unparalleled network, and an unwavering commitment to discretion.</p>
+    <div class="about-sig reveal d4">Eleanor Whitmore</div>
+    <div class="about-sig-role reveal d5">Founder &amp; Principal Broker</div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="svc-inner">
+    <div class="svc-head">
+      <span class="eyebrow reveal">What We Offer</span>
+      <h2 class="sec-title light reveal d1">Bespoke Services,<br>Tailored to You</h2>
+    </div>
+    <div class="svc-grid">
+      <div class="svc-item reveal">
+        <div class="svc-num">01</div>
+        <h3 class="svc-title">Acquisition Advisory</h3>
+        <p class="svc-desc">We source off-market and pre-market opportunities unavailable through conventional channels, giving you first access to the world's finest residences.</p>
+        <a href="#contact" class="svc-lnk">Learn More</a>
+      </div>
+      <div class="svc-item reveal d1">
+        <div class="svc-num">02</div>
+        <h3 class="svc-title">Private Sale &amp; Marketing</h3>
+        <p class="svc-desc">White-glove marketing strategies that present your property to a curated audience of qualified buyers, ensuring complete discretion and maximum value.</p>
+        <a href="#contact" class="svc-lnk">Learn More</a>
+      </div>
+      <div class="svc-item reveal d2">
+        <div class="svc-num">03</div>
+        <h3 class="svc-title">Portfolio Management</h3>
+        <p class="svc-desc">Comprehensive management of luxury real estate portfolios — from asset analysis and yield optimization to concierge property care worldwide.</p>
+        <a href="#contact" class="svc-lnk">Learn More</a>
+      </div>
+      <div class="svc-item reveal d3">
+        <div class="svc-num">04</div>
+        <h3 class="svc-title">Relocation &amp; Lifestyle</h3>
+        <p class="svc-desc">A seamless transition to your new home. We coordinate every detail — schools, staff, memberships, and local introductions — so you arrive, and simply live.</p>
+        <a href="#contact" class="svc-lnk">Learn More</a>
+      </div>
+      <div class="svc-item reveal d4">
+        <div class="svc-num">05</div>
+        <h3 class="svc-title">Investment Consulting</h3>
+        <p class="svc-desc">Sophisticated market analysis and strategic counsel for high-net-worth individuals looking to deploy capital into premier residential and mixed-use assets.</p>
+        <a href="#contact" class="svc-lnk">Learn More</a>
+      </div>
+      <div class="svc-item reveal d5">
+        <div class="svc-num">06</div>
+        <h3 class="svc-title">New Development</h3>
+        <p class="svc-desc">From groundbreaking to final closing, we partner with developers to position, sell, and deliver landmark residential projects of distinction.</p>
+        <a href="#contact" class="svc-lnk">Learn More</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-left">
+    <p class="eyebrow reveal">Get in Touch</p>
+    <h2 class="sec-title reveal d1">Begin Your<br>Property Journey</h2>
+    <p class="contact-body reveal d2">Whether you are searching for your next residence, selling a distinguished property, or simply exploring possibilities — our specialists are ready to listen.</p>
+    <div class="c-details reveal d3">
+      <div class="c-detail">
+        <div class="c-icon">✦</div>
+        <div>
+          <div class="c-lbl">Address</div>
+          <div class="c-val">740 Park Avenue, Suite 12A, New York, NY 10021</div>
+        </div>
+      </div>
+      <div class="c-detail">
+        <div class="c-icon">◇</div>
+        <div>
+          <div class="c-lbl">Phone</div>
+          <div class="c-val">+1 (212) 555 — 0192</div>
+        </div>
+      </div>
+      <div class="c-detail">
+        <div class="c-icon">◈</div>
+        <div>
+          <div class="c-lbl">Email</div>
+          <div class="c-val">inquiries@havenrealestate.com</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form class="contact-form reveal d2" onsubmit="return false">
+    <div class="f-row">
+      <div class="f-group">
+        <input type="text" id="fname" placeholder=" ">
+        <label for="fname">First Name</label>
+      </div>
+      <div class="f-group">
+        <input type="text" id="lname" placeholder=" ">
+        <label for="lname">Last Name</label>
+      </div>
+    </div>
+    <div class="f-group">
+      <input type="email" id="email" placeholder=" ">
+      <label for="email">Email Address</label>
+    </div>
+    <div class="f-group">
+      <input type="text" id="budget" placeholder=" ">
+      <label for="budget">Budget Range</label>
+    </div>
+    <div class="f-group">
+      <textarea id="msg" placeholder=" "></textarea>
+      <label for="msg">Tell us about your ideal property</label>
+    </div>
+    <button class="btn-submit"><span>Send Enquiry</span></button>
+  </form>
+</section>
+
+<!-- FOOTER -->
+<footer id="footer">
+  <div class="footer-wm">HAVEN</div>
+  <div class="footer-in">
+    <div class="footer-top">
+      <div>
+        <a href="#" class="f-logo">HAVEN</a>
+        <p class="f-brand-desc">We curate the world's most extraordinary residences for those who understand that where you live is an expression of who you are.</p>
+        <div class="f-socials">
+          <a href="#" class="f-social" aria-label="Instagram">in</a>
+          <a href="#" class="f-social" aria-label="Twitter">tw</a>
+          <a href="#" class="f-social" aria-label="LinkedIn">li</a>
+          <a href="#" class="f-social" aria-label="Pinterest">pt</a>
+        </div>
+      </div>
+      <div>
+        <p class="f-col-ttl">Properties</p>
+        <ul class="f-links">
+          <li><a href="#">Penthouses</a></li>
+          <li><a href="#">Villas</a></li>
+          <li><a href="#">Estates</a></li>
+          <li><a href="#">Condominiums</a></li>
+          <li><a href="#">New Development</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="f-col-ttl">Company</p>
+        <ul class="f-links">
+          <li><a href="#">About HAVEN</a></li>
+          <li><a href="#">Our Team</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="f-col-ttl">Markets</p>
+        <ul class="f-links">
+          <li><a href="#">New York</a></li>
+          <li><a href="#">Los Angeles</a></li>
+          <li><a href="#">Miami</a></li>
+          <li><a href="#">The Hamptons</a></li>
+          <li><a href="#">International</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bot">
+      <p class="f-copy">&copy; 2026 HAVEN Real Estate. All rights reserved.</p>
+      <div class="f-legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── MOCK DATA ────────────────────────────────────────────────
+const properties = [
+  {id:1,title:'The Elara Penthouse',address:'740 Park Avenue, PH12',city:'Manhattan, NY',price:'$12,500,000',beds:4,baths:5,sqft:'5,200',type:'Penthouse',tag:'exclusive',desc:'Soaring above the Upper East Side, this full-floor penthouse commands panoramic views of Central Park with interiors by AD100 designer Thomas Phifer.',imgs:['1600596542852-a254e7fb7e0e','1600047509807-ba8f99d2cdde','1600210492493-0946911123ea']},
+  {id:2,title:'Malibu Shore Villa',address:'24800 Pacific Coast Highway',city:'Malibu, CA',price:'$18,900,000',beds:6,baths:7,sqft:'8,400',type:'Villa',tag:'new',desc:'An architectural masterpiece of glass and steel set directly on the sand. Floor-to-ceiling walls dissolve the boundary between interior and the Pacific horizon.',imgs:['1512917774080-9991f1c4c750','1605276374104-dee2a0ed3cd6','1600566753190-17f0baa2a6c3']},
+  {id:3,title:'The Meridian',address:'1 Collins Avenue, Apt 4201',city:'Miami Beach, FL',price:'$4,200,000',beds:3,baths:3,sqft:'2,800',type:'Condo',tag:'exclusive',desc:'Perched atop one of South Beach\'s most coveted towers, this sky-high residence offers unobstructed ocean views and resort-caliber amenities.',imgs:['1558618666-fcd25c85cd64','1571939228382-b2f2b585ce15','1600047509358-9dc75507daeb']},
+  {id:4,title:'Aspen Summit Lodge',address:'1180 Mountain View Drive',city:'Aspen, CO',price:'$8,700,000',beds:5,baths:6,sqft:'6,100',type:'House',tag:'new',desc:'A contemporary mountain retreat with ski-in/ski-out access, a glass-enclosed spa, and interiors that celebrate the surrounding alpine landscape.',imgs:['1564013799919-ab600027ffc6','1600585154526-990dced4db0d','1486325212027-8081e485255e']},
+  {id:5,title:'The Carlyle Residence',address:'9820 Sunset Boulevard',city:'Beverly Hills, CA',price:'$22,400,000',beds:7,baths:9,sqft:'11,200',type:'House',tag:'exclusive',desc:'A legendary estate behind private gates. Championship tennis court, infinity pool, screening room, and staff quarters on nearly two acres of manicured grounds.',imgs:['1613490493576-4e3b1fbd4f4e','1560448204-e02f11c3d0e2','1600573472592-401b489a3cdc']},
+  {id:6,title:'Lake Shore Manor',address:'1500 N Lake Shore Drive',city:'Chicago, IL',price:'$5,600,000',beds:4,baths:4,sqft:'3,900',type:'Condo',tag:'new',desc:'A rare double-unit combination on Chicago\'s Gold Coast with breathtaking lake frontage, herringbone oak floors, and a curated art-gallery entry hall.',imgs:['1502005097973-6a7082348e28','1618221195710-dd6b41faaea6','1600566752355-35792bedcfea']},
+  {id:7,title:'Pacific Heights Estate',address:'2880 Broadway Street',city:'San Francisco, CA',price:'$9,800,000',beds:5,baths:5,sqft:'5,800',type:'House',tag:'sold',desc:'A fully restored Edwardian mansion with original coffered ceilings, a chef\'s kitchen of honed marble, and a wraparound garden terrace with Bay views.',imgs:['1600047509807-ba8f99d2cdde','1502005097973-6a7082348e28','1600210492493-0946911123ea']},
+  {id:8,title:'The Waldorf Tower',address:'100 East 50th Street, #42A',city:'Manhattan, NY',price:'$7,300,000',beds:3,baths:3,sqft:'3,200',type:'Penthouse',tag:'exclusive',desc:'White-glove living within one of New York\'s most storied addresses. Original Art Deco details preserved alongside a complete contemporary renovation.',imgs:['1600596542852-a254e7fb7e0e','1558618666-fcd25c85cd64','1571939228382-b2f2b585ce15']},
+  {id:9,title:'Coral Gables Villa',address:'440 Arvida Parkway',city:'Miami, FL',price:'$6,100,000',beds:5,baths:5,sqft:'5,400',type:'Villa',tag:'new',desc:'A Mediterranean-inspired villa behind lush tropical landscaping with a resort pool, summer kitchen, and private boat dock on the Coral Gables Waterway.',imgs:['1512917774080-9991f1c4c750','1564013799919-ab600027ffc6','1605276374104-dee2a0ed3cd6']},
+  {id:10,title:'Highland Park Mansion',address:'4400 Beverly Drive',city:'Dallas, TX',price:'$4,800,000',beds:5,baths:6,sqft:'6,200',type:'House',tag:'sold',desc:'A newly built French chateau on one of Highland Park\'s most prestigious streets, featuring a porte-cochère, wine cellar, and seamless indoor-outdoor living.',imgs:['1613490493576-4e3b1fbd4f4e','1600573472592-401b489a3cdc','1486325212027-8081e485255e']},
+  {id:11,title:'The Beacon Residences',address:'1 Charles Street South, #22B',city:'Boston, MA',price:'$3,900,000',beds:2,baths:2,sqft:'2,100',type:'Condo',tag:'exclusive',desc:'An intimate pied-à-terre with Beacon Hill views, wide-plank walnut floors, and a private terrace perfect for watching the seasons change over the Charles River.',imgs:['1560448204-e02f11c3d0e2','1600585154526-990dced4db0d','1618221195710-dd6b41faaea6']},
+  {id:12,title:'Sunset Ridge Estate',address:'1650 Mulholland Drive',city:'Los Angeles, CA',price:'$15,200,000',beds:6,baths:7,sqft:'9,300',type:'House',tag:'new',desc:'Straddling the ridge above Bel Air with city and ocean views in every direction. An entertainer\'s paradise with a motor court, two pools, and a private cinema.',imgs:['1600607687939-ce8a6c25118c','1600566753190-17f0baa2a6c3','1600566752355-35792bedcfea']}
+];
+
+// Render featured grid (first 6)
+function imgUrl(id,w=800){return`https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=85`}
+
+function tagClass(t){return t==='new'?'tag-new':t==='exclusive'?'tag-exclusive':'tag-sold'}
+
+const propsGrid=document.getElementById('props-grid');
+properties.slice(0,6).forEach((p,i)=>{
+  const el=document.createElement('div');
+  el.className=`prop-card reveal d${i%3+1}`;
+  el.innerHTML=`
+    <div class="card-img-box">
+      <img src="${imgUrl(p.imgs[0])}" alt="${p.title}" loading="lazy">
+      <div class="card-spotlight"></div>
+      <span class="card-tag ${tagClass(p.tag)}">${p.tag}</span>
+    </div>
+    <div class="card-body">
+      <div class="card-price">${p.price}</div>
+      <div class="card-name">${p.title}</div>
+      <div class="card-loc">${p.city}</div>
+      <div class="card-sep"></div>
+      <div class="card-specs">
+        <div class="spec"><span class="spec-ico">⬡</span><span class="spec"><strong>${p.beds}</strong> Bed</span></div>
+        <div class="spec"><span class="spec-ico">◈</span><span class="spec"><strong>${p.baths}</strong> Bath</span></div>
+        <div class="spec"><span class="spec-ico">◻</span><span class="spec"><strong>${p.sqft}</strong> ft²</span></div>
+      </div>
+    </div>`;
+  propsGrid.appendChild(el);
+});
+
+// Render showcase (last 6)
+const showScroll=document.getElementById('show-scroll');
+properties.slice(6,12).forEach((p)=>{
+  const el=document.createElement('div');
+  el.className='show-card';
+  el.innerHTML=`
+    <img src="${imgUrl(p.imgs[0],600)}" alt="${p.title}" loading="lazy">
+    <div class="show-card-over"></div>
+    <div class="show-card-body">
+      <div class="show-card-type">${p.type} &bull; ${p.city}</div>
+      <div class="show-card-name">${p.title}</div>
+      <div class="show-card-price">${p.price}</div>
+    </div>`;
+  showScroll.appendChild(el);
+});
+
+// ── CURSOR ───────────────────────────────────────────────────
+const dot=document.getElementById('cursor-dot');
+const ring=document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.cssText=`left:${mx}px;top:${my}px`});
+(function tickRing(){rx+=(mx-rx)*.11;ry+=(my-ry)*.11;ring.style.cssText=`left:${rx}px;top:${ry}px`;requestAnimationFrame(tickRing)})();
+
+document.querySelectorAll('a,button,.prop-card,.show-card,.svc-item').forEach(el=>{
+  el.addEventListener('mouseenter',()=>ring.classList.add('grow'));
+  el.addEventListener('mouseleave',()=>ring.classList.remove('grow'));
+});
+
+// ── CARD SPOTLIGHT ───────────────────────────────────────────
+document.querySelectorAll('.prop-card').forEach(card=>{
+  const sp=card.querySelector('.card-spotlight');
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    sp.style.setProperty('--mx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+    sp.style.setProperty('--my',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+  });
+});
+
+// ── SCROLL PROGRESS + NAVBAR ─────────────────────────────────
+const prog=document.getElementById('scroll-progress');
+const nav=document.getElementById('navbar');
+window.addEventListener('scroll',()=>{
+  const s=window.scrollY,h=document.documentElement.scrollHeight-window.innerHeight;
+  prog.style.width=(s/h*100)+'%';
+  nav.classList.toggle('scrolled',s>60);
+});
+
+// ── LOADER ───────────────────────────────────────────────────
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    document.getElementById('loader').classList.add('out');
+    document.body.classList.remove('loading');
+    // trigger hero words
+    setTimeout(()=>{
+      document.querySelectorAll('.word').forEach((w,i)=>{
+        setTimeout(()=>w.classList.add('in'),i*140);
+      });
+    },100);
+  },2000);
+});
+
+// ── COUNTER ANIMATION ────────────────────────────────────────
+function runCounter(el){
+  if(el.dataset.done)return;
+  el.dataset.done='1';
+  const target=parseFloat(el.dataset.target);
+  const dec=parseInt(el.dataset.dec||0);
+  const dur=1800,fps=60,steps=dur/(1000/fps);
+  let cur=0,frame=0;
+  const t=setInterval(()=>{
+    frame++;
+    cur=target*(frame/steps);
+    if(frame>=steps){cur=target;clearInterval(t)}
+    el.textContent=dec?cur.toFixed(dec):Math.floor(cur);
+  },1000/fps);
+}
+
+// ── INTERSECTION OBSERVER ────────────────────────────────────
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(!entry.isIntersecting)return;
+    const el=entry.target;
+    el.classList.add('in');
+    el.querySelectorAll('.cnt').forEach(runCounter);
+    if(el.classList.contains('stat-cell'))el.querySelectorAll('.cnt').forEach(runCounter);
+    io.unobserve(el);
+  });
+},{threshold:.18});
+
+document.querySelectorAll('.reveal,.stat-cell').forEach(el=>io.observe(el));
+
+// ── HORIZONTAL SCROLL DRAG ───────────────────────────────────
+(()=>{
+  const sc=showScroll;
+  let down=false,startX,left;
+  sc.addEventListener('mousedown',e=>{down=true;startX=e.pageX-sc.offsetLeft;left=sc.scrollLeft});
+  sc.addEventListener('mouseleave',()=>down=false);
+  sc.addEventListener('mouseup',()=>down=false);
+  sc.addEventListener('mousemove',e=>{
+    if(!down)return;
+    e.preventDefault();
+    sc.scrollLeft=left-(e.pageX-sc.offsetLeft-startX)*1.6;
+  });
+})();
+
+// ── MOBILE NAV ───────────────────────────────────────────────
+const burger=document.getElementById('hamburger');
+const mobileNav=document.getElementById('mobile-nav');
+burger.addEventListener('click',()=>{
+  burger.classList.toggle('active');
+  mobileNav.classList.toggle('open');
+  document.body.style.overflow=mobileNav.classList.contains('open')?'hidden':'';
+});
+mobileNav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+  burger.classList.remove('active');
+  mobileNav.classList.remove('open');
+  document.body.style.overflow='';
+}));
+</script>
+</body>
+</html>
