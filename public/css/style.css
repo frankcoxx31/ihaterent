@@ -39,7 +39,7 @@ body.loading{overflow:hidden}
 /* NAVBAR */
 #navbar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:30px 64px;display:flex;align-items:center;justify-content:space-between;transition:padding .5s var(--ease),background .5s var(--ease),box-shadow .5s}
 #navbar.scrolled{background:var(--navy);padding:18px 64px;box-shadow:0 4px 40px rgba(11,24,41,.25)}
-.nav-logo{display:flex;align-items:center;text-decoration:none;cursor:none}.nav-logo-img{height:70px;width:auto;display:block;border-radius:6px}
+.nav-logo{display:flex;align-items:center;text-decoration:none;cursor:none}.nav-logo-img{height:110px;width:auto;display:block;border-radius:6px}
 .nav-links{display:flex;gap:44px;list-style:none}
 .nav-links a{font-size:12px;font-weight:400;color:rgba(255,255,255,.8);text-decoration:none;letter-spacing:.14em;text-transform:uppercase;cursor:none;position:relative;transition:color .3s}
 .nav-links a::after{content:'';position:absolute;bottom:-5px;left:0;width:0;height:1px;background:var(--tan);transition:width .35s var(--ease)}
