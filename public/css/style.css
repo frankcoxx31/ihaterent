@@ -39,7 +39,7 @@ body.loading{overflow:hidden}
 /* NAVBAR */
 #navbar{position:fixed;top:0;left:0;right:0;z-index:1000;padding:30px 64px;display:flex;align-items:center;justify-content:space-between;transition:padding .5s var(--ease),background .5s var(--ease),box-shadow .5s}
 #navbar.scrolled{background:var(--navy);padding:18px 64px;box-shadow:0 4px 40px rgba(11,24,41,.25)}
-.nav-logo{font-family:var(--font-primary);font-weight:800;font-size:20px;color:var(--white);letter-spacing:.28em;text-decoration:none;cursor:none}
+.nav-logo{display:flex;align-items:center;text-decoration:none;cursor:none}.nav-logo-img{height:46px;width:auto;display:block;border-radius:6px}
 .nav-links{display:flex;gap:44px;list-style:none}
 .nav-links a{font-size:12px;font-weight:400;color:rgba(255,255,255,.8);text-decoration:none;letter-spacing:.14em;text-transform:uppercase;cursor:none;position:relative;transition:color .3s}
 .nav-links a::after{content:'';position:absolute;bottom:-5px;left:0;width:0;height:1px;background:var(--tan);transition:width .35s var(--ease)}
@@ -222,7 +222,7 @@ body.loading{overflow:hidden}
 .footer-wm{position:absolute;bottom:-50px;right:-30px;font-weight:900;font-size:clamp(130px,20vw,300px);color:rgba(255,255,255,.022);letter-spacing:.08em;line-height:1;user-select:none;pointer-events:none;white-space:nowrap}
 .footer-in{max-width:1200px;margin:0 auto;position:relative;z-index:1}
 .footer-top{display:grid;grid-template-columns:2.2fr 1fr 1fr 1fr;gap:60px;margin-bottom:80px}
-.f-logo{font-weight:800;font-size:24px;color:#fff;letter-spacing:.28em;display:block;margin-bottom:18px;text-decoration:none;cursor:none}
+.f-logo{display:block;margin-bottom:18px;text-decoration:none;cursor:none}.footer-logo-img{height:50px;width:auto;display:block}
 .f-brand-desc{font-weight:300;font-size:13px;color:rgba(255,255,255,.35);line-height:1.85;max-width:260px;margin-bottom:28px}
 .f-socials{display:flex;gap:12px}
 .f-social{width:40px;height:40px;border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.4);text-decoration:none;font-size:13px;cursor:none;transition:all .3s}
