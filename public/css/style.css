@@ -73,7 +73,7 @@ body.loading{overflow:hidden}
 #hero{height:100vh;min-height:680px;position:relative;display:flex;align-items:flex-end;overflow:hidden}
 .hero-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1920&q=90') center/cover;transform:scale(1.06);animation:heroKen 9s var(--ease) forwards}
 @keyframes heroKen{to{transform:scale(1)}}
-.hero-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(11,24,41,.15) 0%,rgba(11,24,41,.05) 35%,rgba(11,24,41,.72) 100%)}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(160deg,rgba(0,0,0,.45) 0%,rgba(0,0,0,.35) 35%,rgba(0,0,0,.75) 100%)}
 .hero-content{position:relative;z-index:2;padding:0 64px 110px;max-width:960px}
 .hero-eyebrow{font-family:var(--font-serif);font-style:italic;font-weight:300;font-size:18px;color:var(--tan);letter-spacing:.15em;margin-bottom:22px;opacity:0;animation:fadeUp .7s ease 2s forwards}
 .hero-title{font-weight:800;font-size:clamp(52px,7.5vw,104px);color:#fff;line-height:1.04;letter-spacing:-.025em;margin-bottom:28px}
