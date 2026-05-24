@@ -41,7 +41,7 @@ body.loading{overflow:hidden}
 #navbar.scrolled{background:var(--navy);padding:18px 64px;box-shadow:0 4px 40px rgba(11,24,41,.25)}
 .nav-logo{display:flex;align-items:center;text-decoration:none;cursor:none}.nav-logo-img{height:110px;width:auto;display:block;border-radius:6px}
 .nav-links{display:flex;gap:44px;list-style:none}
-.nav-links a{font-size:12px;font-weight:400;color:rgba(255,255,255,.8);text-decoration:none;letter-spacing:.14em;text-transform:uppercase;cursor:none;position:relative;transition:color .3s}
+.nav-links a{font-size:12px;font-weight:700;color:#fff;text-decoration:none;letter-spacing:.14em;text-transform:uppercase;cursor:none;position:relative;transition:color .3s}
 .nav-links a::after{content:'';position:absolute;bottom:-5px;left:0;width:0;height:1px;background:var(--tan);transition:width .35s var(--ease)}
 .nav-links a:hover{color:#fff}
 .nav-links a:hover::after{width:100%}
