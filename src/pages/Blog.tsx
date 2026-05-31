@@ -4,6 +4,13 @@ import { Link } from 'react-router-dom';
 export default function Blog() {
   const posts = [
     {
+      title: '7 Ways a Reliable Signing Agent Makes Your Closings Run Smoother',
+      slug: '7-ways-reliable-signing-agent-makes-closings-run-smoother',
+      date: 'May 31, 2026',
+      excerpt: 'In the high-stakes world of real estate and finance, the closing table is where the magic happens. Here are seven specific ways a reliable signing agent ensures your closings stay on track and run smoother than ever before.',
+      imageUrl: 'https://cdn.marblism.com/-T_bVNHaZf-.webp'
+    },
+    {
       title: 'How Mobile Loan Signing Support Saves Your Closing Team Time (And Headaches)',
       slug: 'mobile-loan-signing-support-saves-closing-team-time',
       date: 'May 15, 2026',
