@@ -16,6 +16,10 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
 
+app.get('/notary-toolkit', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'notary-toolkit.html'));
+});
+
 app.listen(PORT, () => {
   console.log(`HAVEN running at http://localhost:${PORT}`);
 });

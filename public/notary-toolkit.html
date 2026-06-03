@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Notary's Toolkit — Frank Coxx</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;1,300;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --navy: #0B1829;
+      --navy-mid: #152238;
+      --navy-light: #1e3252;
+      --tan: #C9A96E;
+      --tan-light: #E8D5B0;
+      --tan-dark: #A88040;
+      --off-white: #F8F5F0;
+      --white: #FFFFFF;
+      --gray-light: #EDEAE5;
+      --gray-mid: #9B9590;
+      --text-dark: #1C1C1C;
+      --font-primary: 'Poppins', sans-serif;
+      --font-serif: 'Cormorant Garamond', serif;
+      --ease: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-primary); color: var(--text-dark); background: var(--off-white); overflow-x: hidden; }
+
+    /* ── YOUTUBE BANNER ── */
+    #yt-banner {
+      background: #FF0000;
+      color: #fff;
+      text-align: center;
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: sticky;
+      top: 0;
+      z-index: 2000;
+    }
+    #yt-banner i { font-size: 16px; }
+
+    /* ── STICKY NAV ── */
+    #toolkit-nav {
+      position: sticky;
+      top: 39px;
+      z-index: 1000;
+      background: var(--navy);
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 30px rgba(11,24,41,.3);
+    }
+    .tn-logo {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 20px;
+      color: var(--tan);
+      padding: 16px 0;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+    .tn-links {
+      display: flex;
+      list-style: none;
+      gap: 6px;
+    }
+    .tn-links a {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.65);
+      text-decoration: none;
+      padding: 20px 14px;
+      display: block;
+      transition: color .3s;
+      white-space: nowrap;
+    }
+    .tn-links a:hover { color: var(--tan); }
+    .tn-hamburger {
+      display: none;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 16px 0;
+    }
+
+    /* ── HERO ── */
+    #tk-hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+      padding: 90px 64px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #tk-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(201,169,110,.15) 0%, transparent 65%);
+    }
+    .tk-eyebrow {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 300;
+      font-size: 18px;
+      color: var(--tan);
+      letter-spacing: .15em;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .tk-title {
+      font-weight: 800;
+      font-size: clamp(36px, 6vw, 76px);
+      color: #fff;
+      line-height: 1.05;
+      letter-spacing: -.03em;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .tk-title span { color: var(--tan); }
+    .tk-subtitle {
+      font-weight: 300;
+      font-size: 16px;
+      color: rgba(255,255,255,.6);
+      letter-spacing: .04em;
+      margin-bottom: 48px;
+      position: relative;
+    }
+
+    /* ── FRANK INTRO CARD ── */
+    .frank-intro {
+      max-width: 780px;
+      margin: 0 auto;
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(201,169,110,.25);
+      padding: 32px 40px;
+      display: flex;
+      gap: 28px;
+      align-items: flex-start;
+      text-align: left;
+      position: relative;
+    }
+    .frank-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--tan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: var(--navy);
+      flex-shrink: 0;
+      font-weight: 800;
+    }
+    .frank-intro-text p {
+      font-size: 14px;
+      color: rgba(255,255,255,.7);
+      line-height: 1.85;
+    }
+    .frank-intro-text strong { color: var(--tan); }
+    .affiliate-note {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 11px;
+      color: rgba(255,255,255,.35);
+      font-style: italic;
+    }
+
+    /* ── SECTION WRAPPER ── */
+    .tk-section {
+      padding: 90px 64px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .tk-section:nth-of-type(even) { /* alternate bg via wrapper */ }
+    .tk-section-wrap.alt { background: var(--white); }
+
+    .section-header {
+      margin-bottom: 52px;
+    }
+    .section-header .eyebrow {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-weight: 300;
+      font-size: 17px;
+      color: var(--tan);
+      letter-spacing: .1em;
+      margin-bottom: 8px;
+    }
+    .section-header h2 {
+      font-weight: 700;
+      font-size: clamp(28px, 3.5vw, 44px);
+      color: var(--navy);
+      line-height: 1.1;
+      letter-spacing: -.02em;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .section-header h2 i {
+      color: var(--tan);
+      font-size: .75em;
+    }
+    .section-header p {
+      font-size: 15px;
+      color: var(--gray-mid);
+      font-weight: 300;
+      line-height: 1.7;
+      margin-top: 12px;
+      max-width: 600px;
+    }
+
+    /* ── PRODUCT GRID ── */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    /* ── PRODUCT CARD ── */
+    .product-card {
+      background: #fff;
+      border: 1px solid var(--gray-light);
+      position: relative;
+      overflow: hidden;
+      transition: transform .4s var(--ease), box-shadow .4s var(--ease);
+      display: flex;
+      flex-direction: column;
+    }
+    .product-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 40px 70px rgba(11,24,41,.11);
+    }
+
+    /* Frank's Pick badge */
+    .franks-pick {
+      position: absolute;
+      top: 16px;
+      left: 0;
+      background: var(--tan);
+      color: var(--navy);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      padding: 6px 14px 6px 16px;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .franks-pick::after {
+      content: '';
+      position: absolute;
+      right: -10px;
+      top: 0;
+      bottom: 0;
+      width: 0;
+      border-top: 14px solid transparent;
+      border-bottom: 14px solid transparent;
+      border-left: 10px solid var(--tan);
+    }
+
+    /* product image */
+    .product-img {
+      width: 100%;
+      height: 200px;
+      background: var(--gray-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .product-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .6s var(--ease);
+    }
+    .product-card:hover .product-img img { transform: scale(1.06); }
+    .img-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      color: var(--gray-mid);
+    }
+    .img-placeholder i { font-size: 36px; color: var(--tan-light); }
+    .img-placeholder span { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+
+    /* product body */
+    .product-body {
+      padding: 24px 26px 28px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .product-stars {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+    .product-stars i { color: var(--tan); font-size: 13px; }
+    .product-stars .star-count {
+      font-size: 12px;
+      color: var(--gray-mid);
+      margin-left: 4px;
+    }
+    .product-name {
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--navy);
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+    .product-desc {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--gray-mid);
+      line-height: 1.75;
+      flex: 1;
+      margin-bottom: 20px;
+    }
+    .product-sep { height: 1px; background: var(--gray-light); margin-bottom: 20px; }
+    .btn-amazon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      background: var(--navy);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 14px 20px;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      transition: color .3s;
+    }
+    .btn-amazon::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--tan);
+      transform: translateX(-101%);
+      transition: transform .4s var(--ease);
+    }
+    .btn-amazon:hover::before { transform: translateX(0); }
+    .btn-amazon:hover { color: var(--navy); }
+    .btn-amazon span, .btn-amazon i { position: relative; z-index: 1; }
+
+    /* ── CTA BAND ── */
+    #yt-cta {
+      background: linear-gradient(135deg, #FF0000 0%, #cc0000 100%);
+      padding: 90px 64px;
+      text-align: center;
+    }
+    #yt-cta .eyebrow {
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: rgba(255,255,255,.7);
+      font-size: 18px;
+      letter-spacing: .1em;
+      margin-bottom: 16px;
+      display: block;
+    }
+    #yt-cta h2 {
+      font-weight: 800;
+      font-size: clamp(30px, 4vw, 52px);
+      color: #fff;
+      letter-spacing: -.025em;
+      line-height: 1.1;
+      margin-bottom: 18px;
+    }
+    #yt-cta p {
+      font-size: 15px;
+      color: rgba(255,255,255,.75);
+      font-weight: 300;
+      max-width: 520px;
+      margin: 0 auto 40px;
+      line-height: 1.75;
+    }
+    .btn-yt {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #fff;
+      color: #cc0000;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 18px 44px;
+      text-decoration: none;
+      transition: transform .3s, box-shadow .3s;
+    }
+    .btn-yt:hover { transform: translateY(-3px); box-shadow: 0 20px 50px rgba(0,0,0,.25); }
+    .btn-yt i { font-size: 20px; }
+
+    /* ── FOOTER ── */
+    #tk-footer {
+      background: var(--navy);
+      padding: 52px 64px;
+      text-align: center;
+    }
+    .tk-footer-logo {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 24px;
+      color: var(--tan);
+      margin-bottom: 18px;
+    }
+    .affiliate-disclosure {
+      font-size: 12px;
+      font-weight: 300;
+      color: rgba(255,255,255,.3);
+      line-height: 1.85;
+      max-width: 700px;
+      margin: 0 auto 28px;
+    }
+    .affiliate-disclosure strong { color: rgba(255,255,255,.5); }
+    .tk-footer-copy {
+      font-size: 12px;
+      color: rgba(255,255,255,.2);
+      letter-spacing: .06em;
+    }
+
+    /* ── REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(36px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+    .reveal.in { opacity: 1; transform: none; }
+    .d1{transition-delay:.06s}.d2{transition-delay:.12s}.d3{transition-delay:.18s}
+    .d4{transition-delay:.24s}.d5{transition-delay:.30s}.d6{transition-delay:.36s}
+
+    /* ── MOBILE NAV DRAWER ── */
+    #tn-drawer {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--navy);
+      z-index: 1500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .4s;
+    }
+    #tn-drawer.open { opacity: 1; pointer-events: all; }
+    #tn-drawer a {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 20px;
+      letter-spacing: .04em;
+      transition: color .3s;
+    }
+    #tn-drawer a:hover { color: var(--tan); }
+    #tn-close {
+      position: absolute;
+      top: 24px; right: 28px;
+      background: none; border: none;
+      color: rgba(255,255,255,.5);
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1100px) {
+      .product-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      #toolkit-nav { padding: 0 24px; }
+      .tn-links { display: none; }
+      .tn-hamburger { display: block; }
+      #tk-hero { padding: 60px 28px 60px; }
+      .frank-intro { flex-direction: column; gap: 20px; padding: 24px; }
+      .tk-section { padding: 60px 28px; }
+      .product-grid { grid-template-columns: 1fr; }
+      #yt-cta { padding: 70px 28px; }
+      #tk-footer { padding: 50px 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     YOUTUBE BANNER
+════════════════════════════════════════════ -->
+<div id="yt-banner">
+  <i class="fab fa-youtube"></i>
+  As Seen On My YouTube Channel
+  <i class="fab fa-youtube"></i>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     STICKY NAV
+════════════════════════════════════════════ -->
+<nav id="toolkit-nav">
+  <a class="tn-logo" href="#tk-hero">The Notary's Toolkit</a>
+  <ul class="tn-links">
+    <li><a href="#section-printers">Printers</a></li>
+    <li><a href="#section-computers">Computers</a></li>
+    <li><a href="#section-supplies">Supplies</a></li>
+    <li><a href="#section-software">Software</a></li>
+    <li><a href="#section-bags">Bags</a></li>
+    <li><a href="#yt-cta">YouTube</a></li>
+  </ul>
+  <button class="tn-hamburger" id="tn-open" aria-label="Open menu">
+    <i class="fas fa-bars"></i>
+  </button>
+</nav>
+
+<!-- Mobile Drawer -->
+<div id="tn-drawer">
+  <button id="tn-close"><i class="fas fa-times"></i></button>
+  <a href="#section-printers">Printers</a>
+  <a href="#section-computers">Computers & Tablets</a>
+  <a href="#section-supplies">Notary Supplies</a>
+  <a href="#section-software">Software & Apps</a>
+  <a href="#section-bags">Bags & Organization</a>
+  <a href="#yt-cta">Subscribe on YouTube</a>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     HERO
+════════════════════════════════════════════ -->
+<section id="tk-hero">
+  <p class="tk-eyebrow">Frank Coxx · Notary Public</p>
+  <h1 class="tk-title">The Notary's<br /><span>Toolkit</span></h1>
+  <p class="tk-subtitle">Everything You Need to Run a Professional Notary Business</p>
+
+  <div class="frank-intro">
+    <div class="frank-avatar">FC</div>
+    <div class="frank-intro-text">
+      <p>
+        <strong>Hey! I'm Frank</strong> — a working notary who has tested and used everything on this page.
+        These are my personal recommendations to help you run a smooth, professional notary business.
+        I only recommend products I actually use or believe in.
+      </p>
+      <span class="affiliate-note">
+        <i class="fas fa-info-circle"></i>
+        &nbsp;Some links are affiliate links. I may earn a small commission at no extra cost to you.
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 1 — PRINTERS
+════════════════════════════════════════════ -->
+<div class="tk-section-wrap" id="section-printers">
+  <div class="tk-section">
+    <div class="section-header reveal">
+      <p class="eyebrow">Section 01</p>
+      <h2><i class="fas fa-print"></i> Printers</h2>
+      <p>Best printers and scanners for home office notaries — tested gear that handles high-volume signing packages without missing a beat.</p>
+    </div>
+    <div class="product-grid">
+
+      <!-- Card 1 -->
+      <div class="product-card reveal d1">
+        <div class="franks-pick"><i class="fas fa-star"></i> Frank's Pick</div>
+        <div class="product-img">
+          <div class="img-placeholder">
+            <i class="fas fa-print"></i>
+            <span>Product Image</span>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="product-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+            <span class="star-count">(4.5 / 5)</span>
+          </div>
+          <p class="product-name">Brother HL-L5210DWT Business Monochrome Laser Printer</p>
+          <p class="product-desc">Dual paper trays, wireless &amp; Gigabit Ethernet networking, built-in duplex printing, and large paper capacity — built for high-volume notary signings at home or the office.</p>
+          <div class="product-sep"></div>
+          <a href="https://amzn.to/PLACEHOLDER" target="_blank" rel="nofollow" class="btn-amazon">
+            <i class="fab fa-amazon"></i><span>Check Price on Amazon</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="product-card reveal d2">
+        <div class="product-img">
+          <div class="img-placeholder">
+            <i class="fas fa-print"></i>
+            <span>Product Image</span>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="product-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="far fa-star"></i>
+            <span class="star-count">(4.0 / 5)</span>
+          </div>
+          <p class="product-name">HP LaserJet M602X CE993A Laser Printer (Renewed) — Budget Friendly</p>
+          <p class="product-desc">A certified renewed workhorse that delivers professional laser-quality prints at a fraction of the cost. Perfect for notaries who need reliable output without breaking the bank.</p>
+          <div class="product-sep"></div>
+          <a href="https://amzn.to/PLACEHOLDER" target="_blank" rel="nofollow" class="btn-amazon">
+            <i class="fab fa-amazon"></i><span>Check Price on Amazon</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="product-card reveal d3">
+        <div class="product-img">
+          <img src="/img/plustek-ps186.jpg" alt="Plustek PS186 Desktop Document Scanner" loading="lazy">
+        </div>
+        <div class="product-body">
+          <div class="product-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+            <span class="star-count">(4.5 / 5)</span>
+          </div>
+          <p class="product-name">Plustek PS186 Desktop Document Scanner</p>
+          <p class="product-desc">50-page Auto Document Feeder scans entire signing packages in minutes. Compatible with Windows 7/8/10/11 — a must-have for digitizing and archiving your notary documents fast.</p>
+          <div class="product-sep"></div>
+          <a href="https://amzn.to/4obZ5fM" target="_blank" rel="nofollow" class="btn-amazon">
+            <i class="fab fa-amazon"></i><span>Check Price on Amazon</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2 — COMPUTERS & TABLETS
+════════════════════════════════════════════ -->
+<div class="tk-section-wrap alt" id="section-computers">
+  <div class="tk-section">
+    <div class="section-header reveal">
+      <p class="eyebrow">Section 02</p>
+      <h2><i class="fas fa-laptop"></i> Computers & Tablets</h2>
+      <p>Best laptops and iPads for notaries — fast, reliable, and built for the road.</p>
+    </div>
+    <div class="product-grid">
+
+      <div class="product-card reveal d1">
+        <div class="franks-pick"><i class="fas fa-star"></i> Frank's Pick</div>
+        <div class="product-img">
+          <div class="img-placeholder">
+            <i class="fas fa-laptop"></i>
+            <span>Product Image</span>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="product-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <span class="star-count">(5.0 / 5)</span>
+          </div>
+          <p class="product-name">Apple iPad Pro 11" (M2) with Apple Pencil</p>
+          <p class="product-desc">The ultimate signing tool. Lightweight, powerful, and perfect for RON (Remote Online Notarization) and digital document review.</p>
+          <div class="product-sep"></div>
+          <a href="https://amzn.to/PLACEHOLDER" target="_blank" rel="nofollow" class="btn-amazon">
+            <i class="fab fa-amazon"></i><span>Check Price on Amazon</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="product-card reveal d2">
+        <div class="product-img">
+          <div class="img-placeholder">
+            <i class="fas fa-laptop"></i>
+            <span>Product Image</span>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="product-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+            <span class="star-count">(4.5 / 5)</span>
+          </div>
+          <p class="product-name">Lenovo IdeaPad Flex 5i Chromebook</p>
+          <p class="product-desc">Affordable, fast, and runs all notary web platforms perfectly. Great for notaries who want a reliable laptop without the laptop price tag.</p>
+          <div class="product-sep"></div>
+          <a href="https://amzn.to/PLACEHOLDER" target="_blank" rel="nofollow" class="btn-amazon">
+            <i class="fab fa-amazon"></i><span>Check Price on Amazon</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="product-card reveal d3">
+        <div class="product-img">
+          <div class="img-placeholder">
+            <i class="fas fa-tablet-alt"></i>
+            <span>Product Image</span>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="product-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="far fa-star"></i>
+            <span class="star-count">(4.0 / 5)</span>
+          </div>
+          <p class="product-name">Samsung Galaxy Tab S9 FE</p>
+          <p class="product-desc">A solid Android alternative to the iPad. Great screen, long battery life, and works seamlessly with signing apps and document viewers.</p>
+          <div class="product-sep"></div>
+          <a href="https://amzn.to/PLACEHOLDER" target="_blank" rel="nofollow" class="btn-amazon">
+            <i class="fab fa-amazon"></i><span>Check Price on Amazon</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 3 — NOTARY SUPPLIES
+════════════════════════════════════════════ -->
+<div class="tk-section-wrap" id="section-supplies">
+  <div class="tk-section">
+    <div class="section-header reveal">
+      <p class="eyebrow">Section 03</p>
+      <h2><i class="fas fa-stamp"></i> Notary Supplies</h2>
+      <p>Stamps, journals, pens, embossers, and folders — the essentials every notary needs in their bag.</p>
+    </div>
+    <div class="product-grid">
+
+      <div class="product-card reveal d1">
+        <div class="franks-pick"><i class="fas fa-star"></i> Frank's Pick</div>
+        <div class="product-img">
+          <div class="img-placeholder">
+            <i class="fas fa-stamp"></i>
+            <span>Product Image</span>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="product-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <span class="star-count">(5.0 / 5)</span>
+          </div>
+          <p class="product-name">Notary Rubber Stamp — Pre-Inked</p>
+          <p class="product-desc">Clean, professional impressions every time. Pre-inked stamps last thousands of uses without re-inking — a must for busy notaries.</p>
+          <div class="product-sep"></div>
+          <a href="https://amzn.to/PLACEHOLDER" target="_blank" rel="nofollow" class="btn-amazon">
+            <i class="fab fa-amazon"></i><span>Check Price on Amazon</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="product-card reveal d2">
+        <div class="product-img">
+          <div class="img-placeholder">
+            <i class="fas fa-book"></i>
+            <span>Product Image</span>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="product-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+            <span class="star-count">(4.5 / 5)</span>
+          </div>
+          <p class="product-name">Notary Journal — 496 Entries</p>
+          <p class="product-desc">A proper hard-cover notary journal with 496 entries. Keeps you legally protected and organized for every single signing appointment.</p>
+          <div class="product-sep"></div>
+          <a href="https://amzn.to/PLACEHOLDER" target="_blank" rel="nofollow" class="btn-amazon">
+            <i class="fab fa-amazon"></i><span>Check Price on Amazon</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="product-card reveal d3">
+        <div class="product-img">
+          <div class="img-placeholder">
+            <i class="fas fa-pen-fancy"></i>
+            <span>Product Image</span>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="product-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <span class="star-count">(5.0 / 5)</span>
+          </div>
+          <p class="product-name">SKILCRAFT B3 Aviator Multi-Color Pen (12-Pack)</p>
+          <p class="product-desc">The signing pen of choice for professionals. Smooth black ink, comfortable grip, and clients actually comment on how nice they write.</p>
+          <div class="product-sep"></div>
+          <a href="https://amzn.to/PLACEHOLDER" target="_blank" rel="nofollow" class="btn-amazon">
+            <i class="fab fa-amazon"></i><span>Check Price on Amazon</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="product-card reveal d4">
+        <div class="product-img">
+          <div class="img-placeholder">
+            <i class="fas fa-certificate"></i>
+            <span>Product Image</span>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="product-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="far fa-star"></i>
+            <span class="star-count">(4.0 / 5)</span>
+          </div>
+          <p class="product-name">Notary Embosser Seal</p>
+          <p class="product-desc">Adds a professional raised seal impression to your documents. Clients love the look and it adds an extra layer of credibility to every notarization.</p>
+          <div class="product-sep"></div>
+          <a href="https://amzn.to/PLACEHOLDER" target="_blank" rel="nofollow" class="btn-amazon">
+            <i class="fab fa-amazon"></i><span>Check Price on Amazon</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="product-card reveal d5">
+        <div class="product-img">
+          <div class="img-placeholder">
+            <i class="fas fa-folder-open"></i>
+            <span>Product Image</span>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="product-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+            <span class="star-count">(4.5 / 5)</span>
+          </div>
+          <p class="product-name">Professional Document Presentation Folders</p>
+          <p class="product-desc">Present signing packages like a pro. These two-pocket folders keep documents organized and leave a polished impression with every client.</p>
+          <div class="product-sep"></div>
+          <a href="https://amzn.to/PLACEHOLDER" target="_blank" rel="nofollow" class="btn-amazon">
+            <i class="fab fa-amazon"></i><span>Check Price on Amazon</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 4 — SOFTWARE & APPS
+════════════════════════════════════════════ -->
+<div class="tk-section-wrap alt" id="section-software">
+  <div class="tk-section">
+    <div class="section-header reveal">
+      <p class="eyebrow">Section 04</p>
+      <h2><i class="fas fa-mobile-alt"></i> Software & Apps</h2>
+      <p>Signing software, scheduling tools, and e-notary platforms that keep your business running smoothly.</p>
+    </div>
+    <div class="product-grid">
+
+      <div class="product-card reveal d1">
+        <div class="franks-pick"><i class="fas fa-star"></i> Frank's Pick</div>
+        <div class="product-img">
+          <div class="img-placeholder">
+            <i class="fas fa-file-signature"></i>
+            <span>Product Image</span>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="product-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <span class="star-count">(5.0 / 5)</span>
+          </div>
+          <p class="product-name">Notarize.com (RON Platform)</p>
+          <p class="product-desc">My top pick for Remote Online Notarization. Easy to use, compliant in most states, and keeps a secure digital audit trail for every session.</p>
+          <div class="product-sep"></div>
+          <a href="https://amzn.to/PLACEHOLDER" target="_blank" rel="nofollow" class="btn-amazon">
+            <i class="fas fa-external-link-alt"></i><span>Check It Out</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="product-card reveal d2">
+        <div class="product-img">
+          <div class="img-placeholder">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Product Image</span>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="product-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+            <span class="star-count">(4.5 / 5)</span>
+          </div>
+          <p class="product-name">Notary Gadget (Business Management Software)</p>
+          <p class="product-desc">Built specifically for notaries. Track signings, mileage, income, and expenses all in one place. Makes tax time a breeze.</p>
+          <div class="product-sep"></div>
+          <a href="https://amzn.to/PLACEHOLDER" target="_blank" rel="nofollow" class="btn-amazon">
+            <i class="fas fa-external-link-alt"></i><span>Check It Out</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="product-card reveal d3">
+        <div class="product-img">
+          <div class="img-placeholder">
+            <i class="fas fa-signature"></i>
+            <span>Product Image</span>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="product-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="far fa-star"></i>
+            <span class="star-count">(4.0 / 5)</span>
+          </div>
+          <p class="product-name">DocuSign eSignature</p>
+          <p class="product-desc">The industry-standard for digital signatures. Clients already trust it and it integrates with almost every platform notaries work with.</p>
+          <div class="product-sep"></div>
+          <a href="https://amzn.to/PLACEHOLDER" target="_blank" rel="nofollow" class="btn-amazon">
+            <i class="fas fa-external-link-alt"></i><span>Check It Out</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 5 — BAGS & ORGANIZATION
+════════════════════════════════════════════ -->
+<div class="tk-section-wrap" id="section-bags">
+  <div class="tk-section">
+    <div class="section-header reveal">
+      <p class="eyebrow">Section 05</p>
+      <h2><i class="fas fa-briefcase"></i> Bags & Organization</h2>
+      <p>Notary bags, document organizers, and car accessories — stay mobile and look professional on every job.</p>
+    </div>
+    <div class="product-grid">
+
+      <div class="product-card reveal d1">
+        <div class="franks-pick"><i class="fas fa-star"></i> Frank's Pick</div>
+        <div class="product-img">
+          <div class="img-placeholder">
+            <i class="fas fa-briefcase"></i>
+            <span>Product Image</span>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="product-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <span class="star-count">(5.0 / 5)</span>
+          </div>
+          <p class="product-name">Solo New York Pro Slim Laptop Briefcase</p>
+          <p class="product-desc">Professional, lightweight, and fits a 15.6" laptop plus all your notary supplies. This is what I carry to every single signing appointment.</p>
+          <div class="product-sep"></div>
+          <a href="https://amzn.to/PLACEHOLDER" target="_blank" rel="nofollow" class="btn-amazon">
+            <i class="fab fa-amazon"></i><span>Check Price on Amazon</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="product-card reveal d2">
+        <div class="product-img">
+          <div class="img-placeholder">
+            <i class="fas fa-folder"></i>
+            <span>Product Image</span>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="product-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+            <span class="star-count">(4.5 / 5)</span>
+          </div>
+          <p class="product-name">Expanding File Accordion Document Organizer</p>
+          <p class="product-desc">Keep multiple signing packages organized and separated. Color-coded tabs make it easy to grab the right documents at any appointment.</p>
+          <div class="product-sep"></div>
+          <a href="https://amzn.to/PLACEHOLDER" target="_blank" rel="nofollow" class="btn-amazon">
+            <i class="fab fa-amazon"></i><span>Check Price on Amazon</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="product-card reveal d3">
+        <div class="product-img">
+          <div class="img-placeholder">
+            <i class="fas fa-car"></i>
+            <span>Product Image</span>
+          </div>
+        </div>
+        <div class="product-body">
+          <div class="product-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="far fa-star"></i>
+            <span class="star-count">(4.0 / 5)</span>
+          </div>
+          <p class="product-name">Car Seat Back Organizer with Work Surface</p>
+          <p class="product-desc">Turns your backseat into a mobile office. Organize supplies, hold documents, and have a flat surface ready before you walk into a signing.</p>
+          <div class="product-sep"></div>
+          <a href="https://amzn.to/PLACEHOLDER" target="_blank" rel="nofollow" class="btn-amazon">
+            <i class="fab fa-amazon"></i><span>Check Price on Amazon</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     YOUTUBE CTA
+════════════════════════════════════════════ -->
+<section id="yt-cta">
+  <span class="eyebrow">Join the Community</span>
+  <h2>Watch Me Work.<br />Learn the Business.</h2>
+  <p>Subscribe to my YouTube channel for real notary tips, gear reviews, signing walkthroughs, and everything I wish I knew when I started.</p>
+  <a href="https://youtube.com/@PLACEHOLDER" target="_blank" class="btn-yt">
+    <i class="fab fa-youtube"></i> Subscribe on YouTube
+  </a>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════ -->
+<footer id="tk-footer">
+  <div class="tk-footer-logo">The Notary's Toolkit</div>
+  <p class="affiliate-disclosure">
+    <strong>Affiliate Disclosure:</strong> This page contains affiliate links. As an Amazon Associate and affiliate partner of other services listed, I earn a small commission from qualifying purchases at no additional cost to you. I only recommend products I personally use or genuinely believe in. All opinions are my own. Thank you for supporting my channel and business — it helps me keep creating free content for notaries like you.
+  </p>
+  <p class="tk-footer-copy">© 2026 Frank Coxx · Integrity Closings Charlotte · All Rights Reserved</p>
+</footer>
+
+<script>
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); } });
+  }, { threshold: 0.12 });
+  reveals.forEach(r => observer.observe(r));
+
+  // Mobile nav drawer
+  document.getElementById('tn-open').addEventListener('click', () => {
+    document.getElementById('tn-drawer').classList.add('open');
+  });
+  document.getElementById('tn-close').addEventListener('click', () => {
+    document.getElementById('tn-drawer').classList.remove('open');
+  });
+  document.querySelectorAll('#tn-drawer a').forEach(a => {
+    a.addEventListener('click', () => {
+      document.getElementById('tn-drawer').classList.remove('open');
+    });
+  });
+</script>
+</body>
+</html>
