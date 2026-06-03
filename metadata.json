@@ -1,0 +1,6 @@
+{
+  "name": "Integrity Closings CLT",
+  "description": "Professional Mobile Notary and Loan Signing services in Charlotte, NC and surrounding areas. Features real-time calendar booking and AI assistance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
