@@ -20,6 +20,10 @@ app.get('/notary-toolkit', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'notary-toolkit.html'));
 });
 
+app.get('/service-locations-mobile-services-north-carolina', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'service-locations-mobile-services-north-carolina.html'));
+});
+
 app.listen(PORT, () => {
   console.log(`HAVEN running at http://localhost:${PORT}`);
 });

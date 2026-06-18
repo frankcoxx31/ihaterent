@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mobile Notary Service Locations — North Carolina | Integrity Closings CLT</title>
+  <meta name="description" content="Integrity Closings CLT provides mobile notary and loan signing services across Charlotte, Concord, Gastonia, Monroe, Matthews, Mint Hill, Salisbury, and all of the greater North Carolina region." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;1,300;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --navy: #0B1829;
+      --navy-mid: #152238;
+      --navy-light: #1e3252;
+      --tan: #C9A96E;
+      --tan-light: #E8D5B0;
+      --tan-dark: #A88040;
+      --off-white: #F8F5F0;
+      --white: #FFFFFF;
+      --gray-light: #EDEAE5;
+      --gray-mid: #9B9590;
+      --text-dark: #1C1C1C;
+      --font-primary: 'Poppins', sans-serif;
+      --font-serif: 'Cormorant Garamond', serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font-primary); color: var(--text-dark); background: #ffffff; overflow-x: hidden; }
+
+    /* NAV */
+    #top-nav {
+      background: var(--navy);
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .nav-logo-text {
+      color: var(--tan);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: .04em;
+      text-decoration: none;
+    }
+    .nav-links-list {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+    .nav-links-list a {
+      color: rgba(255,255,255,.8);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: .04em;
+      transition: color .2s;
+    }
+    .nav-links-list a:hover { color: var(--tan); }
+    .nav-cta-btn {
+      background: var(--tan);
+      color: var(--navy) !important;
+      padding: 8px 20px;
+      border-radius: 4px;
+      font-weight: 700 !important;
+      font-size: 13px !important;
+    }
+    .nav-cta-btn:hover { background: var(--tan-dark) !important; color: #fff !important; }
+
+    /* HERO */
+    #hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+      padding: 80px 40px 70px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('/charlotte.jpg') center/cover no-repeat;
+      opacity: .12;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(201,169,110,.15);
+      border: 1px solid var(--tan);
+      color: var(--tan);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    #hero h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      color: var(--white);
+      font-weight: 400;
+      line-height: 1.15;
+      position: relative;
+      margin-bottom: 20px;
+    }
+    #hero h1 span { color: var(--tan); }
+    #hero p.lead {
+      color: rgba(255,255,255,.75);
+      font-size: 16px;
+      max-width: 620px;
+      margin: 0 auto 36px;
+      line-height: 1.7;
+      position: relative;
+    }
+    .hero-btns {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+      position: relative;
+    }
+    .btn-primary {
+      background: var(--tan);
+      color: var(--navy);
+      padding: 14px 32px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      letter-spacing: .04em;
+      transition: background .2s, transform .15s;
+    }
+    .btn-primary:hover { background: var(--tan-dark); color: #fff; transform: translateY(-2px); }
+    .btn-outline {
+      border: 2px solid rgba(255,255,255,.4);
+      color: #fff;
+      padding: 14px 32px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      transition: border-color .2s, background .2s;
+    }
+    .btn-outline:hover { border-color: var(--tan); background: rgba(201,169,110,.1); }
+
+    /* STATS BAR */
+    #stats {
+      background: var(--tan);
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0;
+    }
+    .stat-item {
+      flex: 1;
+      min-width: 160px;
+      text-align: center;
+      padding: 22px 20px;
+      border-right: 1px solid rgba(11,24,41,.15);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num { font-size: 26px; font-weight: 800; color: var(--navy); line-height: 1; }
+    .stat-label { font-size: 11px; font-weight: 600; color: var(--navy-mid); letter-spacing: .08em; text-transform: uppercase; margin-top: 4px; }
+
+    /* MAIN CONTENT */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+
+    /* INTRO */
+    #intro { padding: 72px 0 48px; text-align: center; }
+    #intro .section-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--tan-dark);
+      margin-bottom: 12px;
+    }
+    #intro h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      color: var(--navy);
+      font-weight: 400;
+      margin-bottom: 18px;
+    }
+    #intro p {
+      color: #555;
+      font-size: 15px;
+      line-height: 1.8;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* LOCATION CARDS */
+    #locations { padding: 0 0 80px; }
+    .locations-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .loc-card {
+      background: var(--white);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 16px rgba(11,24,41,.08);
+      transition: transform .25s, box-shadow .25s;
+    }
+    .loc-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(11,24,41,.14); }
+    .loc-card-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+    }
+    .loc-card-img-placeholder {
+      width: 100%;
+      height: 180px;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .loc-card-img-placeholder i { font-size: 48px; color: rgba(201,169,110,.4); }
+    .loc-card-body { padding: 24px; }
+    .loc-card-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--tan-dark);
+      margin-bottom: 8px;
+    }
+    .loc-card h3 { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+    .loc-card p { font-size: 13px; color: #666; line-height: 1.7; margin-bottom: 16px; }
+    .loc-services {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+    .loc-service-tag {
+      background: var(--off-white);
+      border: 1px solid var(--gray-light);
+      color: var(--navy);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 100px;
+    }
+    .loc-card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--tan-dark);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      letter-spacing: .03em;
+    }
+    .loc-card-link:hover { color: var(--navy); }
+    .loc-card-link i { font-size: 11px; }
+
+    /* SERVICES SECTION */
+    #services { background: var(--navy); padding: 72px 0; }
+    #services .section-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--tan);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    #services h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      color: var(--white);
+      font-weight: 400;
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    .service-card {
+      background: var(--navy-mid);
+      border: 1px solid rgba(201,169,110,.15);
+      border-radius: 8px;
+      padding: 28px 24px;
+      transition: border-color .2s, background .2s;
+    }
+    .service-card:hover { border-color: var(--tan); background: var(--navy-light); }
+    .service-card i {
+      font-size: 28px;
+      color: var(--tan);
+      margin-bottom: 16px;
+      display: block;
+    }
+    .service-card h3 { font-size: 15px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+    .service-card p { font-size: 13px; color: rgba(255,255,255,.6); line-height: 1.7; }
+
+    /* COVERAGE MAP SECTION */
+    #coverage { padding: 72px 0; text-align: center; }
+    #coverage .section-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--tan-dark);
+      margin-bottom: 12px;
+    }
+    #coverage h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      color: var(--navy);
+      font-weight: 400;
+      margin-bottom: 16px;
+    }
+    #coverage p.lead {
+      color: #555;
+      font-size: 15px;
+      max-width: 600px;
+      margin: 0 auto 48px;
+      line-height: 1.8;
+    }
+    .counties-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .county-pill {
+      background: var(--white);
+      border: 1px solid var(--gray-light);
+      border-radius: 100px;
+      padding: 8px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--navy);
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .county-pill.featured {
+      background: var(--navy);
+      color: var(--tan);
+      border-color: var(--navy);
+    }
+
+    /* CTA SECTION */
+    #cta {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+      padding: 80px 40px;
+      text-align: center;
+    }
+    #cta h2 {
+      font-family: var(--font-serif);
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      color: var(--white);
+      font-weight: 400;
+      margin-bottom: 16px;
+    }
+    #cta p {
+      color: rgba(255,255,255,.75);
+      font-size: 15px;
+      max-width: 540px;
+      margin: 0 auto 36px;
+      line-height: 1.7;
+    }
+    .cta-phone {
+      display: block;
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--tan);
+      text-decoration: none;
+      margin-bottom: 24px;
+      letter-spacing: .02em;
+    }
+    .cta-phone:hover { color: var(--tan-light); }
+
+    /* FOOTER */
+    #footer {
+      background: var(--navy);
+      border-top: 1px solid rgba(255,255,255,.05);
+      padding: 28px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    #footer p { font-size: 12px; color: rgba(255,255,255,.4); }
+    #footer a { color: var(--tan); text-decoration: none; font-size: 12px; }
+
+    @media (max-width: 700px) {
+      #top-nav { padding: 0 20px; }
+      .nav-links-list { display: none; }
+      #hero { padding: 60px 20px 50px; }
+      .container { padding: 0 20px; }
+      #cta { padding: 60px 20px; }
+      #footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="top-nav">
+  <a href="/" class="nav-logo-text">Integrity Closings CLT</a>
+  <ul class="nav-links-list">
+    <li><a href="/">Home</a></li>
+    <li><a href="#locations">Locations</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#coverage">Coverage</a></li>
+    <li><a href="tel:9805401890" class="nav-cta-btn">980-540-1890</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-badge"><i class="fas fa-map-marker-alt"></i> Serving Greater Charlotte & NC</div>
+    <h1>Mobile Notary Services<br>Across <span>North Carolina</span></h1>
+    <p class="lead">We come to you — hospitals, offices, homes, and courthouses. Certified Notary Signing Agent serving Charlotte and surrounding NC counties 7 days a week.</p>
+    <div class="hero-btns">
+      <a href="tel:9805401890" class="btn-primary"><i class="fas fa-phone"></i>&nbsp; Call 980-540-1890</a>
+      <a href="#locations" class="btn-outline">View Service Areas</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div id="stats">
+  <div class="stat-item"><div class="stat-num">7</div><div class="stat-label">Days a Week</div></div>
+  <div class="stat-item"><div class="stat-num">50+</div><div class="stat-label">NC Cities Served</div></div>
+  <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">Mobile — We Come to You</div></div>
+  <div class="stat-item"><div class="stat-num">NSA</div><div class="stat-label">Certified Signing Agent</div></div>
+</div>
+
+<!-- INTRO -->
+<section id="intro">
+  <div class="container">
+    <p class="section-eyebrow">Service Locations</p>
+    <h2>Where We Serve Across North Carolina</h2>
+    <p>Integrity Closings CLT is your trusted mobile notary and loan signing agent throughout the greater Charlotte metro and beyond. From Concord to Gastonia, Monroe to Salisbury — we bring the signing table to you, wherever you are.</p>
+  </div>
+</section>
+
+<!-- LOCATION CARDS -->
+<section id="locations">
+  <div class="container">
+    <div class="locations-grid">
+
+      <div class="loc-card">
+        <img src="/charlotte.jpg" alt="Charlotte NC Mobile Notary" class="loc-card-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="loc-card-img-placeholder" style="display:none"><i class="fas fa-city"></i></div>
+        <div class="loc-card-body">
+          <div class="loc-card-tag">Primary Hub</div>
+          <h3>Charlotte, NC</h3>
+          <p>Full-service mobile notary and loan signing throughout Charlotte's neighborhoods, hospitals, offices, and residential communities.</p>
+          <div class="loc-services">
+            <span class="loc-service-tag">Loan Signings</span>
+            <span class="loc-service-tag">Real Estate</span>
+            <span class="loc-service-tag">Hospital Visits</span>
+            <span class="loc-service-tag">General Notary</span>
+          </div>
+          <a href="tel:9805401890" class="loc-card-link">Book Appointment <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="loc-card">
+        <img src="/concord.jpg" alt="Concord NC Mobile Notary" class="loc-card-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="loc-card-img-placeholder" style="display:none"><i class="fas fa-map-marker-alt"></i></div>
+        <div class="loc-card-body">
+          <div class="loc-card-tag">Cabarrus County</div>
+          <h3>Concord, NC</h3>
+          <p>Serving Concord and surrounding Cabarrus County communities with prompt mobile notary service for real estate closings and legal documents.</p>
+          <div class="loc-services">
+            <span class="loc-service-tag">Loan Signings</span>
+            <span class="loc-service-tag">Legal Docs</span>
+            <span class="loc-service-tag">Power of Attorney</span>
+          </div>
+          <a href="tel:9805401890" class="loc-card-link">Book Appointment <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="loc-card">
+        <img src="/gastiona.png" alt="Gastonia NC Mobile Notary" class="loc-card-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="loc-card-img-placeholder" style="display:none"><i class="fas fa-map-marker-alt"></i></div>
+        <div class="loc-card-body">
+          <div class="loc-card-tag">Gaston County</div>
+          <h3>Gastonia, NC</h3>
+          <p>Mobile notary coverage throughout Gastonia and Gaston County. Available for same-day and after-hours signing appointments.</p>
+          <div class="loc-services">
+            <span class="loc-service-tag">Loan Signings</span>
+            <span class="loc-service-tag">Same-Day</span>
+            <span class="loc-service-tag">After Hours</span>
+          </div>
+          <a href="tel:9805401890" class="loc-card-link">Book Appointment <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="loc-card">
+        <img src="/monroe-1.jpg" alt="Monroe NC Mobile Notary" class="loc-card-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="loc-card-img-placeholder" style="display:none"><i class="fas fa-map-marker-alt"></i></div>
+        <div class="loc-card-body">
+          <div class="loc-card-tag">Union County</div>
+          <h3>Monroe, NC</h3>
+          <p>Serving Monroe and Union County for real estate closings, personal documents, and all mobile notary needs at your home or office.</p>
+          <div class="loc-services">
+            <span class="loc-service-tag">Real Estate</span>
+            <span class="loc-service-tag">Personal Docs</span>
+            <span class="loc-service-tag">Wills & Trusts</span>
+          </div>
+          <a href="tel:9805401890" class="loc-card-link">Book Appointment <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="loc-card">
+        <img src="/matthews-1.jpg" alt="Matthews NC Mobile Notary" class="loc-card-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="loc-card-img-placeholder" style="display:none"><i class="fas fa-map-marker-alt"></i></div>
+        <div class="loc-card-body">
+          <div class="loc-card-tag">Mecklenburg County</div>
+          <h3>Matthews, NC</h3>
+          <p>Convenient mobile notary in Matthews — loan signings, refinances, and personal document notarizations at your home, office, or preferred location.</p>
+          <div class="loc-services">
+            <span class="loc-service-tag">Loan Signings</span>
+            <span class="loc-service-tag">Refinance</span>
+            <span class="loc-service-tag">General Notary</span>
+          </div>
+          <a href="tel:9805401890" class="loc-card-link">Book Appointment <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="loc-card">
+        <img src="/mint-hill.jpg" alt="Mint Hill NC Mobile Notary" class="loc-card-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="loc-card-img-placeholder" style="display:none"><i class="fas fa-map-marker-alt"></i></div>
+        <div class="loc-card-body">
+          <div class="loc-card-tag">Mecklenburg County</div>
+          <h3>Mint Hill, NC</h3>
+          <p>Mobile notary services in Mint Hill for real estate transactions, business documents, and personal notarizations — we come to you.</p>
+          <div class="loc-services">
+            <span class="loc-service-tag">Real Estate</span>
+            <span class="loc-service-tag">Business Docs</span>
+            <span class="loc-service-tag">Personal</span>
+          </div>
+          <a href="tel:9805401890" class="loc-card-link">Book Appointment <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="loc-card">
+        <img src="/salisbury-nc.jpg" alt="Salisbury NC Mobile Notary" class="loc-card-img" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="loc-card-img-placeholder" style="display:none"><i class="fas fa-map-marker-alt"></i></div>
+        <div class="loc-card-body">
+          <div class="loc-card-tag">Rowan County</div>
+          <h3>Salisbury, NC</h3>
+          <p>Covering Salisbury and Rowan County for mobile notary and loan signing services. Flexible scheduling available including evenings and weekends.</p>
+          <div class="loc-services">
+            <span class="loc-service-tag">Loan Signings</span>
+            <span class="loc-service-tag">Evenings</span>
+            <span class="loc-service-tag">Weekends</span>
+          </div>
+          <a href="tel:9805401890" class="loc-card-link">Book Appointment <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="loc-card">
+        <div class="loc-card-img-placeholder"><i class="fas fa-hospital"></i></div>
+        <div class="loc-card-body">
+          <div class="loc-card-tag">Statewide</div>
+          <h3>Hospital & Care Facility Signings</h3>
+          <p>We specialize in hospital visits, nursing homes, and assisted living facilities across the Charlotte region for urgent document notarizations.</p>
+          <div class="loc-services">
+            <span class="loc-service-tag">Hospitals</span>
+            <span class="loc-service-tag">Nursing Homes</span>
+            <span class="loc-service-tag">Assisted Living</span>
+            <span class="loc-service-tag">Urgent</span>
+          </div>
+          <a href="tel:9805401890" class="loc-card-link">Book Appointment <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="container">
+    <p class="section-eyebrow">What We Notarize</p>
+    <h2>Services Available at Every Location</h2>
+    <div class="services-grid">
+      <div class="service-card">
+        <i class="fas fa-home"></i>
+        <h3>Real Estate Closings</h3>
+        <p>Purchase, sale, and refinance loan signings with a certified Notary Signing Agent at your location.</p>
+      </div>
+      <div class="service-card">
+        <i class="fas fa-file-contract"></i>
+        <h3>Legal Documents</h3>
+        <p>Wills, trusts, power of attorney, affidavits, and all legal documents notarized on-site.</p>
+      </div>
+      <div class="service-card">
+        <i class="fas fa-briefcase"></i>
+        <h3>Business Documents</h3>
+        <p>Corporate resolutions, contracts, agreements, and business filings handled promptly and professionally.</p>
+      </div>
+      <div class="service-card">
+        <i class="fas fa-user-shield"></i>
+        <h3>Personal Documents</h3>
+        <p>Passport photos, I-9 verifications, vehicle titles, medical directives, and more.</p>
+      </div>
+      <div class="service-card">
+        <i class="fas fa-hospital"></i>
+        <h3>Hospital Visits</h3>
+        <p>Sensitive and compassionate service for patients who need documents notarized at medical facilities.</p>
+      </div>
+      <div class="service-card">
+        <i class="fas fa-clock"></i>
+        <h3>After-Hours & Same-Day</h3>
+        <p>Urgent signings available evenings, weekends, and holidays throughout the Charlotte metro.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COVERAGE -->
+<section id="coverage">
+  <div class="container">
+    <p class="section-eyebrow">Full Coverage Area</p>
+    <h2>Cities & Counties We Serve</h2>
+    <p class="lead">We travel throughout Mecklenburg, Union, Cabarrus, Gaston, Rowan, Iredell, and surrounding NC counties. Don't see your city? Call us — we likely cover it.</p>
+    <div class="counties-wrap">
+      <span class="county-pill featured">Charlotte</span>
+      <span class="county-pill featured">Concord</span>
+      <span class="county-pill featured">Gastonia</span>
+      <span class="county-pill featured">Monroe</span>
+      <span class="county-pill featured">Matthews</span>
+      <span class="county-pill featured">Mint Hill</span>
+      <span class="county-pill featured">Salisbury</span>
+      <span class="county-pill">Huntersville</span>
+      <span class="county-pill">Cornelius</span>
+      <span class="county-pill">Davidson</span>
+      <span class="county-pill">Mooresville</span>
+      <span class="county-pill">Kannapolis</span>
+      <span class="county-pill">Harrisburg</span>
+      <span class="county-pill">Stallings</span>
+      <span class="county-pill">Indian Trail</span>
+      <span class="county-pill">Waxhaw</span>
+      <span class="county-pill">Weddington</span>
+      <span class="county-pill">Pineville</span>
+      <span class="county-pill">Belmont</span>
+      <span class="county-pill">Mount Holly</span>
+      <span class="county-pill">Statesville</span>
+      <span class="county-pill">Fort Mill, SC</span>
+      <span class="county-pill">Rock Hill, SC</span>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <h2>Ready to Book Your Mobile Notary?</h2>
+  <p>Available 7 days a week throughout North Carolina. Call now to schedule your appointment — we come to you.</p>
+  <a href="tel:9805401890" class="cta-phone">980-540-1890</a>
+  <div class="hero-btns">
+    <a href="tel:9805401890" class="btn-primary">Call to Book Now</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="footer">
+  <p>&copy; 2025 Integrity Closings CLT &mdash; Frank Coxx, Certified Notary Signing Agent</p>
+  <a href="/">Back to Home</a>
+</footer>
+
+</body>
+</html>
