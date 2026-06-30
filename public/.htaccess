@@ -4,6 +4,17 @@
   RewriteRule ^index\.html$ - [L]
   RewriteRule ^service-locations-mobile-services-north-carolina$ /service-locations-mobile-services-north-carolina.html [L]
   RewriteRule ^notary-toolkit$ /notary-toolkit.html [L]
+  # --- location pages (generated) ---
+  RewriteRule ^mobile-notary-concord-nc$ /mobile-notary-concord-nc.html [L]
+  RewriteRule ^mobile-notary-gastonia-nc$ /mobile-notary-gastonia-nc.html [L]
+  RewriteRule ^mobile-notary-monroe-nc$ /mobile-notary-monroe-nc.html [L]
+  RewriteRule ^mobile-notary-matthews-nc$ /mobile-notary-matthews-nc.html [L]
+  RewriteRule ^mobile-notary-mint-hill-nc$ /mobile-notary-mint-hill-nc.html [L]
+  RewriteRule ^mobile-notary-salisbury-nc$ /mobile-notary-salisbury-nc.html [L]
+  RewriteRule ^mobile-notary-locust-nc$ /mobile-notary-locust-nc.html [L]
+  RewriteRule ^mobile-notary-midland-nc$ /mobile-notary-midland-nc.html [L]
+  # --- end location pages ---
+
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule . /index.html [L]
