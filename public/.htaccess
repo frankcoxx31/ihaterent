@@ -13,7 +13,26 @@
   RewriteRule ^mobile-notary-salisbury-nc$ /mobile-notary-salisbury-nc.html [L]
   RewriteRule ^mobile-notary-locust-nc$ /mobile-notary-locust-nc.html [L]
   RewriteRule ^mobile-notary-midland-nc$ /mobile-notary-midland-nc.html [L]
+  RewriteRule ^mobile-notary-huntersville-nc$ /mobile-notary-huntersville-nc.html [L]
+  RewriteRule ^mobile-notary-cornelius-nc$ /mobile-notary-cornelius-nc.html [L]
+  RewriteRule ^mobile-notary-davidson-nc$ /mobile-notary-davidson-nc.html [L]
+  RewriteRule ^mobile-notary-mooresville-nc$ /mobile-notary-mooresville-nc.html [L]
+  RewriteRule ^mobile-notary-kannapolis-nc$ /mobile-notary-kannapolis-nc.html [L]
+  RewriteRule ^mobile-notary-harrisburg-nc$ /mobile-notary-harrisburg-nc.html [L]
+  RewriteRule ^mobile-notary-indian-trail-nc$ /mobile-notary-indian-trail-nc.html [L]
+  RewriteRule ^mobile-notary-stallings-nc$ /mobile-notary-stallings-nc.html [L]
+  RewriteRule ^mobile-notary-waxhaw-nc$ /mobile-notary-waxhaw-nc.html [L]
+  RewriteRule ^mobile-notary-weddington-nc$ /mobile-notary-weddington-nc.html [L]
+  RewriteRule ^mobile-notary-pineville-nc$ /mobile-notary-pineville-nc.html [L]
+  RewriteRule ^mobile-notary-belmont-nc$ /mobile-notary-belmont-nc.html [L]
+  RewriteRule ^mobile-notary-mount-holly-nc$ /mobile-notary-mount-holly-nc.html [L]
+  RewriteRule ^mobile-notary-statesville-nc$ /mobile-notary-statesville-nc.html [L]
+  RewriteRule ^mobile-notary-fort-mill-sc$ /mobile-notary-fort-mill-sc.html [L]
+  RewriteRule ^mobile-notary-rock-hill-sc$ /mobile-notary-rock-hill-sc.html [L]
   # --- end location pages ---
+
+
+
 
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
